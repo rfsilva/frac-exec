@@ -4,7 +4,7 @@ baseline_commit: NO_VCS
 
 # Story 2.5: Seal Banner & Availability Management
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -108,3 +108,32 @@ _A ser preenchido_
 
 ### File List
 _A ser preenchido_
+
+## Senior Developer Review (AI)
+
+**Data:** 2026-06-02
+**Outcome:** Changes Requested
+**Layers:** Blind Hunter · Acceptance Auditor (merged)
+
+### Action Items
+
+#### Blockers (High)
+
+- [x] [Review][Patch] Drawer "Salvar" sem guard — segundo clique antes da resposta envia PATCH duplo; adicionar `saving` signal e `[disabled]="saving()"` [availability-drawer.ts]
+- [x] [Review][Patch] Min days = 0 contradiz AC-4 (range 1–20) — alterar `min="1"` no input e `@Min(1)` no backend; 0 é sentinel do sistema, não seleção do usuário [AvailabilityUpdateRequest.java / availability-drawer.ts]
+- [x] [Review][Patch] JWT parsing com `atob` sem padding — usar `AuthService.currentUser()` para obter o email em vez de parsear manualmente [executive-shell.ts:72-78]
+- [x] [Review][Patch] `progressPct` getter retorna lambda — usar `get progressPct(): number { return Math.round(...); }` sem arrow function interna [executive-dashboard.ts:86]
+
+#### Patches de Qualidade / AC (Med)
+
+- [x] [Review][Patch] `verificationDate` hardcoded null — adicionar campo `verifiedAt` na entidade / response e passar valor real ao SealBanner [executive-shell.ts:27]
+- [x] [Review][Patch] Focus trap ausente apesar de `aria-modal="true"` — adicionar lógica de focus trap manual (sem CDK no MVP) [availability-drawer.ts]
+- [x] [Review][Patch] Dashboard inicializa `profileStatus` como 'ACTIVE' antes do GET — usar `null` ou valor do perfil carregado; unificar com a chamada do Shell para evitar double-load [executive-dashboard.ts:82]
+- [x] [Review][Patch] Sem `error:` handler no profile load do Shell e Dashboard — adicionar fallback para evitar banner silenciosamente ausente [executive-shell.ts / executive-dashboard.ts]
+
+#### Deferred
+
+- [x] [Review][Defer] Drawer não fecha imediatamente (aguarda PATCH) — UX aceitável; usuário vê spinner
+
+### Review Follow-ups (AI)
+_(será preenchido pelo dev ao retomar)_

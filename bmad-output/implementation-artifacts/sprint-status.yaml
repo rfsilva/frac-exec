@@ -56,8 +56,8 @@ development_status:
   2-2-admin-candidacy-queue-with-inline-expansion: done
   2-3-candidacy-review-decision-and-notification: done
   2-4-executive-profile-completion: done
-  2-5-seal-banner-and-availability-management: in-progress
-  2-6-admin-executive-pool-view: in-progress
+  2-5-seal-banner-and-availability-management: done
+  2-6-admin-executive-pool-view: done
   epic-2-retrospective: optional
 
   # ─── Epic 3: SMB Registration & Need Posting ──────────────────────────────

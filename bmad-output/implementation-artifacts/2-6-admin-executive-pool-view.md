@@ -4,7 +4,7 @@ baseline_commit: NO_VCS
 
 # Story 2.6: Admin Executive Pool View
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -265,3 +265,31 @@ _A ser preenchido_
 
 ### File List
 _A ser preenchido_
+
+## Senior Developer Review (AI)
+
+**Data:** 2026-06-02
+**Outcome:** Changes Requested
+**Layers:** Blind Hunter · Acceptance Auditor (merged)
+
+### Action Items
+
+#### Blockers (High)
+
+- [x] [Review][Patch] JPQL DISTINCT + LEFT JOIN dupla sobreconta `totalElements` — substituir filtros de coleção por EXISTS subquery ou separar em dois joins com OR [ExecutiveProfileRepository.java]
+- [x] [Review][Patch] `isComplete` duplicado no JPQL — usar método Java em memória após query, ou query JPQL com EXISTS correta, para garantir consistência com `ExecutiveProfile.isComplete()` [ExecutiveProfileRepository.java / AdminPoolServiceImpl.java]
+
+#### Patches de Qualidade / AC (Med)
+
+- [x] [Review][Patch] Initials derivadas do email, não de nome real — `User` não tem `fullName`; usar email local-part (já feito) mas documentar limitação; derivar 2 primeiras letras de forma mais robusta [AdminPoolServiceImpl.java]
+- [x] [Review][Patch] `getPoolDetail` sem filtro de completude — adicionar verificação `isComplete()` ou buscar via `findCompleteProfilesWithFilters` [AdminPoolServiceImpl.java]
+- [x] [Review][Patch] Sector filter dispara GET a cada keystroke — substituir `(input)` por `(change)` ou adicionar debounce via Subject+switchMap [admin-pool.ts]
+- [x] [Review][Patch] `companyVisibilityRaw` é mapa do executivo, não nomes reais da candidatura — usar `applicationRepository` para buscar nomes reais de `application_positions` [AdminPoolServiceImpl.java]
+- [x] [Review][Patch] `CAST(ep.profileStatus AS string)` — substituir por parâmetro tipado como `ProfileStatus` enum [ExecutiveProfileRepository.java]
+
+#### Deferred
+
+- [x] [Review][Defer] Shortlist "cannot add" — feature não implementada ainda; badge "Indisponível" como indicador visual é suficiente no MVP
+
+### Review Follow-ups (AI)
+_(será preenchido pelo dev ao retomar)_

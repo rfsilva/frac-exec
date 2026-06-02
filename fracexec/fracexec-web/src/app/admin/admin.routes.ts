@@ -28,6 +28,11 @@ export const ADMIN_ROUTES: Routes = [
           import('./pool/admin-pool').then(m => m.AdminPool),
       },
       {
+        path: 'pool/:profileId',
+        loadComponent: () =>
+          import('./pool/pool-detail/pool-detail').then(m => m.PoolDetail),
+      },
+      {
         path: 'needs',
         loadComponent: () =>
           import('./needs/admin-needs').then(m => m.AdminNeeds),
