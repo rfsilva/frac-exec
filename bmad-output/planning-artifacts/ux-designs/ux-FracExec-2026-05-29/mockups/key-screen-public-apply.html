@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Candidatura de Executivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-primary:#132A1E;--brand-deep:#1F4A32;--brand-accent:#4DC78A;--brand-accent-lt:#DCEEE4;
+    --surface-bg:#F2F7F4;--surface-card:#FFFFFF;--surface-muted:#EDF4F0;
+    --text-primary:#0D1F15;--text-secondary:#4A6358;--text-muted:#8BA898;--text-inverse:#EAF2EE;
+    --border:#C8E0D2;--state-error:#E74C3C;--state-error-bg:#FDECEA;
+    --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-full:9999px;
+    --shadow-sm:0 1px 4px rgba(19,42,30,.06);--shadow-md:0 4px 20px rgba(19,42,30,.10);
+    --font-d:'Plus Jakarta Sans',system-ui,sans-serif;--font-b:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-b);background:var(--surface-bg);color:var(--text-primary);min-height:100vh;}
+
+  /* TOPBAR PUBLIC */
+  .pub-nav{background:var(--brand-primary);padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+  .pub-logo{font-family:var(--font-d);font-weight:800;font-size:18px;color:var(--brand-accent);letter-spacing:-.02em;}
+  .pub-nav-link{font-size:13px;color:rgba(234,242,238,.7);font-weight:500;}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--brand-primary) 0%,var(--brand-deep) 100%);padding:48px 48px 40px;text-align:center;}
+  .hero-seal{display:inline-flex;align-items:center;gap:7px;background:rgba(77,199,138,.15);border:1px solid rgba(77,199,138,.3);color:var(--brand-accent);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:var(--radius-full);margin-bottom:20px;}
+  .hero-title{font-family:var(--font-d);font-size:32px;font-weight:800;color:var(--text-inverse);margin-bottom:10px;line-height:1.2;}
+  .hero-title span{color:var(--brand-accent);}
+  .hero-sub{font-size:15px;color:rgba(234,242,238,.65);max-width:500px;margin:0 auto;line-height:1.6;}
+
+  /* STEPPER */
+  .stepper-wrap{max-width:680px;margin:0 auto;padding:40px 24px 64px;}
+  .stepper{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:40px;}
+  .step{display:flex;align-items:center;gap:0;}
+  .step-circle{width:34px;height:34px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:var(--font-d);}
+  .step-circle.done{background:var(--brand-accent);color:var(--brand-primary);}
+  .step-circle.current{background:var(--brand-primary);color:var(--brand-accent);box-shadow:0 0 0 3px var(--brand-accent-lt);}
+  .step-circle.todo{background:var(--surface-muted);color:var(--text-muted);border:2px solid var(--border);}
+  .step-label{font-size:12px;font-weight:600;margin-left:8px;color:var(--text-secondary);}
+  .step-label.current{color:var(--brand-primary);font-weight:700;}
+  .step-label.done{color:var(--brand-deep);}
+  .step-line{width:48px;height:2px;margin:0 4px;}
+  .step-line.done{background:var(--brand-accent);}
+  .step-line.todo{background:var(--border);}
+
+  /* FORM CARD */
+  .form-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:36px 40px;}
+  .form-section-title{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+  .form-section-sub{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.5;}
+
+  /* FIELDS */
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .field-row.full{grid-template-columns:1fr;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:.02em;}
+  .field label span.req{color:var(--state-error);}
+  .field input,.field select,.field textarea{
+    border:1.5px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;
+    font-family:var(--font-b);font-size:14px;color:var(--text-primary);background:var(--surface-card);
+    transition:border .15s;outline:none;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand-accent);}
+  .field input.filled{border-color:var(--brand-accent);background:rgba(77,199,138,.03);}
+  .field textarea{resize:vertical;min-height:80px;}
+  .field-hint{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+  /* EXPERIENCE BLOCK */
+  .exp-divider{border:none;border-top:1px solid var(--surface-muted);margin:24px 0;}
+  .exp-block{background:var(--surface-muted);border-radius:var(--radius-md);padding:20px 20px 16px;margin-bottom:16px;position:relative;}
+  .exp-block-num{position:absolute;top:14px;right:16px;font-size:11px;color:var(--text-muted);font-weight:600;background:var(--surface-card);padding:2px 8px;border-radius:var(--radius-full);border:1px solid var(--border);}
+  .exp-block-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:14px;}
+  .add-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-deep);background:var(--brand-accent-lt);border:1px dashed var(--brand-accent);border-radius:var(--radius-md);padding:10px 18px;cursor:pointer;width:100%;justify-content:center;margin-top:4px;}
+
+  /* LGPD */
+  .lgpd-box{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 18px;margin-top:8px;}
+  .lgpd-row{display:flex;align-items:flex-start;gap:10px;}
+  .lgpd-check{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:var(--surface-card);}
+  .lgpd-text{font-size:13px;color:var(--text-secondary);line-height:1.6;}
+  .lgpd-link{color:var(--brand-deep);font-weight:600;text-decoration:underline;}
+
+  /* ACTIONS */
+  .form-actions{display:flex;align-items:center;justify-content:space-between;margin-top:32px;padding-top:24px;border-top:1px solid var(--surface-muted);}
+  .btn-back{font-size:13px;font-weight:600;color:var(--text-secondary);background:transparent;border:1.5px solid var(--border);padding:9px 20px;border-radius:var(--radius-md);cursor:pointer;}
+  .btn-next{font-family:var(--font-d);font-size:13px;font-weight:700;background:var(--brand-primary);color:var(--brand-accent);padding:11px 28px;border-radius:var(--radius-md);border:none;cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .step-counter{font-size:12px;color:var(--text-muted);}
+
+  /* CONFIRMATION STATE */
+  .confirm-screen{text-align:center;padding:48px 32px;}
+  .confirm-icon{width:72px;height:72px;border-radius:var(--radius-full);background:var(--brand-accent);color:var(--brand-primary);font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+  .confirm-title{font-family:var(--font-d);font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:10px;}
+  .confirm-sub{font-size:15px;color:var(--text-secondary);max-width:420px;margin:0 auto;line-height:1.6;}
+  .confirm-detail{display:inline-block;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 20px;margin-top:20px;font-size:13px;color:var(--text-secondary);}
+  .confirm-detail strong{color:var(--text-primary);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="pub-nav">
+  <div class="pub-logo">FracExec</div>
+  <div class="pub-nav-link">Já tenho cadastro → Entrar</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-seal">✦ Candidatura ao Selo FracExec</div>
+  <h1 class="hero-title">Seja um executivo<br><span>verificado e curado</span></h1>
+  <p class="hero-sub">Processo seletivo criterioso. Quem passa carrega uma credencial que separa quem viveu a cadeira de quem apenas carrega o título.</p>
+</div>
+
+<!-- STEPPER + FORM -->
+<div class="stepper-wrap">
+
+  <div class="stepper">
+    <div class="step">
+      <div class="step-circle done">✓</div>
+      <div class="step-label done">Dados pessoais</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step">
+      <div class="step-circle current">2</div>
+      <div class="step-label current">Histórico C-Level</div>
+    </div>
+    <div class="step-line todo"></div>
+    <div class="step">
+      <div class="step-circle todo">3</div>
+      <div class="step-label">Referências</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-section-title">Seu histórico C-Level</div>
+    <div class="form-section-sub">Liste as posições C-Level que você realmente exerceu. Verificamos cada uma — seja específico sobre impacto, porte da equipe e receita sob gestão.</div>
+
+    <!-- EXP BLOCK 1 -->
+    <div class="exp-block">
+      <div class="exp-block-num">Posição 1</div>
+      <div class="exp-block-title">Cargo C-Level exercido</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Função <span class="req">*</span></label>
+          <select>
+            <option selected>CFO — Diretor Financeiro</option>
+            <option>CTO — Diretor de Tecnologia</option>
+            <option>CMO — Diretor de Marketing</option>
+            <option>COO — Diretor de Operações</option>
+            <option>Outro C-Level</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Setor da empresa <span class="req">*</span></label>
+          <select><option selected>Varejo</option><option>Logística</option><option>Tecnologia</option><option>Indústria</option><option>Serviços</option></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Período de início <span class="req">*</span></label>
+          <input type="text" class="filled" placeholder="mm/aaaa" value="03/2018">
+        </div>
+        <div class="field">
+          <label>Período de saída <span class="req">*</span></label>
+          <input type="text" class="filled" placeholder="mm/aaaa ou Em curso" value="11/2024">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Tamanho da equipe liderada <span class="req">*</span></label>
+          <select><option>1–10 pessoas</option><option selected>11–50 pessoas</option><option>51–200 pessoas</option><option>200+ pessoas</option></select>
+        </div>
+        <div class="field">
+          <label>Receita anual sob gestão <span class="req">*</span></label>
+          <select><option>Até R$10M</option><option>R$10M–50M</option><option selected>R$50M–200M</option><option>R$200M–1B</option><option>Acima de R$1B</option></select>
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field">
+          <label>Principal resultado entregue <span class="req">*</span></label>
+          <textarea class="filled" placeholder="Descreva o impacto mais relevante deste período...">Reestruturação completa da área de FP&A, redução de 18% no custo de capital e captação de R$45M em rodada Serie B em 2022.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXP BLOCK 2 -->
+    <div class="exp-block">
+      <div class="exp-block-num">Posição 2</div>
+      <div class="exp-block-title">Cargo C-Level exercido</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Função <span class="req">*</span></label>
+          <select><option selected>CFO — Diretor Financeiro</option></select>
+        </div>
+        <div class="field">
+          <label>Setor da empresa <span class="req">*</span></label>
+          <select><option selected>Logística</option></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Período de início <span class="req">*</span></label>
+          <input type="text" class="filled" value="01/2014">
+        </div>
+        <div class="field">
+          <label>Período de saída <span class="req">*</span></label>
+          <input type="text" class="filled" value="02/2018">
+        </div>
+      </div>
+    </div>
+
+    <div class="add-btn">+ Adicionar outra posição C-Level</div>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button class="btn-back">← Voltar</button>
+      <span class="step-counter">Etapa 2 de 3</span>
+      <button class="btn-next">Próxima etapa →</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+version: "3.9"
+
+# Local override — forces local Spring profile.
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.local.yml up
+
+services:
+  api:
+    environment:
+      SPRING_PROFILES_ACTIVE: local

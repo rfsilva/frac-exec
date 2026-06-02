@@ -1,0 +1,80 @@
+package com.fracexec.api.notification.service;
+
+import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+@Service
+public class EmailServiceImpl implements EmailService {
+
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
+    private static final String TEMPLATE_DIR = "templates/email/";
+    private static final DateTimeFormatter DATE_FMT =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("America/Sao_Paulo"));
+
+    private final JavaMailSender mailSender;
+
+    public EmailServiceImpl(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    @Override
+    public void sendApplicationReceived(String toEmail, String applicantName) {
+        String body = loadTemplate("application-received.html")
+            .replace("{{applicantName}}", applicantName);
+        sendHtml(toEmail, "Candidatura recebida — FracExec", body);
+    }
+
+    @Override
+    public void sendApplicationApproved(String toEmail, String applicantName, String profileLink) {
+        String body = loadTemplate("application-approved.html")
+            .replace("{{applicantName}}", applicantName)
+            .replace("{{profileLink}}", profileLink);
+        sendHtml(toEmail, "Candidatura aprovada — FracExec", body);
+    }
+
+    @Override
+    public void sendApplicationRejected(String toEmail, String applicantName, Instant reapplyAfter) {
+        String reapplyMessage = reapplyAfter != null
+            ? "Você poderá submeter uma nova candidatura a partir de <strong>" + DATE_FMT.format(reapplyAfter) + "</strong>."
+            : "";
+        String body = loadTemplate("application-rejected.html")
+            .replace("{{applicantName}}", applicantName)
+            .replace("{{reapplyMessage}}", reapplyMessage);
+        sendHtml(toEmail, "Resultado da sua candidatura — FracExec", body);
+    }
+
+    private String loadTemplate(String templateName) {
+        try {
+            ClassPathResource resource = new ClassPathResource(TEMPLATE_DIR + templateName);
+            return resource.getContentAsString(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.warn("Template de e-mail não encontrado '{}': {}", templateName, e.getClass().getSimpleName());
+            return "<p>Notificação FracExec</p>";
+        }
+    }
+
+    private void sendHtml(String toEmail, String subject, String htmlBody) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+            log.info("E-mail enviado: {}", subject);
+        } catch (Exception e) {
+            log.warn("Falha ao enviar e-mail '{}': {}", subject, e.getClass().getSimpleName());
+        }
+    }
+}

@@ -1,0 +1,27 @@
+@use '@angular/material' as mat;
+
+// FracExec M3 theme — brand.primary #132A1E, brand.accent #4DC78A
+// mat.$green-palette is the closest M3 palette to the FracExec brand green family.
+// Exact brand hex values are exposed as CSS custom properties in :root (see styles.scss)
+// and used directly by FracExec-custom components. Angular Material uses the M3 palette
+// for interactive states (hover, focus, ripple) on Material components.
+$fracexec-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$green-palette,
+  ),
+  typography: (
+    plain-family: '"Inter", system-ui, sans-serif',
+    brand-family: '"Plus Jakarta Sans", system-ui, sans-serif',
+  ),
+  density: (
+    scale: 0
+  ),
+));
+
+// P3: mat.core() must be at root level (not inside a selector) per Angular Material docs
+@include mat.core();
+
+html {
+  @include mat.all-component-themes($fracexec-theme);
+}

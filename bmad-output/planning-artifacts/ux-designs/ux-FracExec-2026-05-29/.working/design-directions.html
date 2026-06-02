@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Design Directions</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #F0EEE9; padding: 40px 24px; }
+  h1 { text-align: center; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  h2 { text-align: center; font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 48px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 32px; max-width: 1180px; margin: 0 auto; }
+
+  /* Card base */
+  .card { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,.1); }
+  .card-header { padding: 32px 32px 24px; }
+  .direction-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .6; margin-bottom: 8px; }
+  .direction-name { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .direction-tagline { font-size: 14px; opacity: .7; line-height: 1.5; }
+
+  /* Swatches */
+  .swatches { display: flex; height: 48px; }
+  .swatch { flex: 1; }
+  .swatch-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Mock UI */
+  .mock { padding: 24px 28px 28px; background: #fff; }
+  .mock-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #999; margin-bottom: 14px; }
+
+  /* Nav mock */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-radius: 10px; margin-bottom: 16px; }
+  .nav-brand { font-weight: 800; font-size: 15px; letter-spacing: -.01em; }
+  .nav-links { display: flex; gap: 20px; font-size: 12px; opacity: .7; }
+  .nav-cta { font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 6px; letter-spacing: .03em; }
+
+  /* Seal badge */
+  .badge-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .badge-icon { font-size: 12px; }
+
+  /* Card mock */
+  .exec-card { border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .exec-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .exec-role { font-size: 12px; opacity: .6; margin-bottom: 10px; }
+  .exec-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+
+  /* Button mock */
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; letter-spacing: .03em; border: none; cursor: default; }
+
+  /* ─────────────────────── DIRECTION 1 ─────────────────────── */
+  .d1 .card-header { background: #0A1628; color: #F5F1E8; }
+  .d1 .direction-name { color: #C8A84B; }
+  .d1 .s1a { background: #0A1628; }
+  .d1 .s1b { background: #1C3461; }
+  .d1 .s1c { background: #C8A84B; }
+  .d1 .s1d { background: #F5F1E8; }
+  .d1 .s1e { background: #E8DCC8; }
+  .d1 .nav { background: #0A1628; }
+  .d1 .nav-brand { color: #C8A84B; }
+  .d1 .nav-links { color: #F5F1E8; }
+  .d1 .nav-cta { background: #C8A84B; color: #0A1628; }
+  .d1 .badge { background: #C8A84B22; color: #96780D; border: 1px solid #C8A84B66; }
+  .d1 .exec-card { background: #F8F5EF; border: 1px solid #E0D8C8; }
+  .d1 .exec-name { color: #0A1628; }
+  .d1 .tag { background: #1C346122; color: #1C3461; }
+  .d1 .btn-primary { background: #0A1628; color: #C8A84B; }
+  .d1 .btn-secondary { background: #F5F1E8; color: #0A1628; border: 1px solid #C8A84B; }
+
+  /* ─────────────────────── DIRECTION 2 ─────────────────────── */
+  .d2 .card-header { background: #1E1E2E; color: #EEF0F4; }
+  .d2 .direction-name { color: #E8A87C; }
+  .d2 .s2a { background: #1E1E2E; }
+  .d2 .s2b { background: #3D3D5C; }
+  .d2 .s2c { background: #E8A87C; }
+  .d2 .s2d { background: #FAFAF8; }
+  .d2 .s2e { background: #F2EDE6; }
+  .d2 .nav { background: #1E1E2E; }
+  .d2 .nav-brand { color: #fff; font-weight: 900; }
+  .d2 .nav-links { color: #EEF0F4; }
+  .d2 .nav-cta { background: #E8A87C; color: #1E1E2E; }
+  .d2 .badge { background: #E8A87C22; color: #B5612A; border: 1px solid #E8A87C88; }
+  .d2 .exec-card { background: #F5F2EE; border: 1px solid #E5DDD4; }
+  .d2 .exec-name { color: #1E1E2E; }
+  .d2 .tag { background: #E8A87C22; color: #7A3B1E; }
+  .d2 .btn-primary { background: #E8A87C; color: #1E1E2E; }
+  .d2 .btn-secondary { background: transparent; color: #1E1E2E; border: 1.5px solid #1E1E2E; }
+
+  /* ─────────────────────── DIRECTION 3 ─────────────────────── */
+  .d3 .card-header { background: #132A1E; color: #EAF2EE; }
+  .d3 .direction-name { color: #4DC78A; }
+  .d3 .s3a { background: #132A1E; }
+  .d3 .s3b { background: #1F4A32; }
+  .d3 .s3c { background: #4DC78A; }
+  .d3 .s3d { background: #F5F8F5; }
+  .d3 .s3e { background: #DCEEE4; }
+  .d3 .nav { background: #132A1E; }
+  .d3 .nav-brand { color: #4DC78A; }
+  .d3 .nav-links { color: #EAF2EE; }
+  .d3 .nav-cta { background: #4DC78A; color: #132A1E; font-weight: 700; }
+  .d3 .badge { background: #4DC78A22; color: #1A7A4A; border: 1px solid #4DC78A66; }
+  .d3 .exec-card { background: #F2F8F4; border: 1px solid #C8E0D2; }
+  .d3 .exec-name { color: #132A1E; }
+  .d3 .tag { background: #132A1E22; color: #132A1E; }
+  .d3 .btn-primary { background: #132A1E; color: #4DC78A; }
+  .d3 .btn-secondary { background: #DCEEE4; color: #132A1E; }
+
+  /* ─────────────────────── RECOMMENDED tag ─────────────────── */
+  .rec-tag { display: inline-block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-left: 10px; vertical-align: middle; background: #4DC78A33; color: #1A7A4A; }
+</style>
+</head>
+<body>
+
+<h1>FracExec · Design Directions</h1>
+<h2>Escolha sua direção visual</h2>
+
+<div class="grid">
+
+  <!-- ═══════════════════════ DIRECTION 1 ═══════════════════════ -->
+  <div class="card d1">
+    <div class="card-header">
+      <div class="direction-label">Direção 1</div>
+      <div class="direction-name">Executive Trust</div>
+      <div class="direction-tagline">Navy profundo + Ouro quente.<br>Autoridade, legado e confiança — Bloomberg meets private banking.</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch s1a" title="#0A1628 — Navy Profundo"></div>
+      <div class="swatch s1b" title="#1C3461 — Azul Executivo"></div>
+      <div class="swatch s1c" title="#C8A84B — Ouro Quente"></div>
+      <div class="swatch s1d" title="#F5F1E8 — Creme"></div>
+      <div class="swatch s1e" title="#E8DCC8 — Areia Dourada"></div>
+    </div>
+    <div class="mock">
+      <div class="mock-label">Preview</div>
+      <div class="nav">
+        <span class="nav-brand">FracExec</span>
+        <div class="nav-links"><span>Executivos</span><span>Empresas</span><span>Como funciona</span></div>
+        <span class="nav-cta">Candidatar-se</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge"><span class="badge-icon">✦</span> Selo FracExec · Verificado</span>
+      </div>
+      <div class="exec-card">
+        <div class="exec-name">Marcus A.</div>
+        <div class="exec-role">CFO · 18 anos de experiência verificada</div>
+        <div class="exec-tags">
+          <span class="tag">Finanças Estratégicas</span>
+          <span class="tag">M&A</span>
+          <span class="tag">Varejo</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">Ver disponibilidade</button>
+        <button class="btn btn-secondary">Saiba mais</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ DIRECTION 2 ═══════════════════════ -->
+  <div class="card d2">
+    <div class="card-header">
+      <div class="direction-label">Direção 2 <span class="rec-tag">Recomendada</span></div>
+      <div class="direction-name">Curated Premium</div>
+      <div class="direction-tagline">Charcoal moderno + Terracota quente.<br>Humano, premium sem ser frio — onde seniority encontra acessibilidade.</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch s2a" title="#1E1E2E — Charcoal Profundo"></div>
+      <div class="swatch s2b" title="#3D3D5C — Índigo Escuro"></div>
+      <div class="swatch s2c" title="#E8A87C — Terracota Suave"></div>
+      <div class="swatch s2d" title="#FAFAF8 — Branco Quente"></div>
+      <div class="swatch s2e" title="#F2EDE6 — Linho"></div>
+    </div>
+    <div class="mock">
+      <div class="mock-label">Preview</div>
+      <div class="nav">
+        <span class="nav-brand">FracExec</span>
+        <div class="nav-links"><span>Executivos</span><span>Empresas</span><span>Como funciona</span></div>
+        <span class="nav-cta">Candidatar-se</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge"><span class="badge-icon">◆</span> Selo FracExec · Verificado</span>
+      </div>
+      <div class="exec-card">
+        <div class="exec-name">Marcus A.</div>
+        <div class="exec-role">CFO · 18 anos de experiência verificada</div>
+        <div class="exec-tags">
+          <span class="tag">Finanças Estratégicas</span>
+          <span class="tag">M&A</span>
+          <span class="tag">Varejo</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">Ver disponibilidade</button>
+        <button class="btn btn-secondary">Saiba mais</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ DIRECTION 3 ═══════════════════════ -->
+  <div class="card d3">
+    <div class="card-header">
+      <div class="direction-label">Direção 3</div>
+      <div class="direction-name">Verified Growth</div>
+      <div class="direction-tagline">Verde floresta + Verde menta vibrante.<br>Crescimento, verificação e credibilidade — o "Selo" como identidade central.</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch s3a" title="#132A1E — Verde Floresta"></div>
+      <div class="swatch s3b" title="#1F4A32 — Verde Profundo"></div>
+      <div class="swatch s3c" title="#4DC78A — Menta Vibrante"></div>
+      <div class="swatch s3d" title="#F5F8F5 — Branco Verde"></div>
+      <div class="swatch s3e" title="#DCEEE4 — Sage Claro"></div>
+    </div>
+    <div class="mock">
+      <div class="mock-label">Preview</div>
+      <div class="nav">
+        <span class="nav-brand">FracExec</span>
+        <div class="nav-links"><span>Executivos</span><span>Empresas</span><span>Como funciona</span></div>
+        <span class="nav-cta">Candidatar-se</span>
+      </div>
+      <div class="badge-row">
+        <span class="badge"><span class="badge-icon">✔</span> Selo FracExec · Verificado</span>
+      </div>
+      <div class="exec-card">
+        <div class="exec-name">Marcus A.</div>
+        <div class="exec-role">CFO · 18 anos de experiência verificada</div>
+        <div class="exec-tags">
+          <span class="tag">Finanças Estratégicas</span>
+          <span class="tag">M&A</span>
+          <span class="tag">Varejo</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">Ver disponibilidade</button>
+        <button class="btn btn-secondary">Saiba mais</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:1180px; margin: 48px auto 0; background:#fff; border-radius:16px; padding:28px 32px;">
+  <p style="font-size:12px; color:#666; line-height:1.8;">
+    <strong style="color:#1a1a1a;">Racional de tendências 2026:</strong>
+    O mercado B2B premium está migrando do azul corporativo clássico para paletas com mais calor e profundidade.
+    Charcoal + Terracota (D2) é a tendência dominante em plataformas de talento e serviços profissionais premium (Deel, Remote, Toptal 2025-2026).
+    Navy + Gold (D1) continua forte em fintech e serviços financeiros de alto valor — posiciona o FracExec mais próximo de um banco privado.
+    Verde (D3) carrega forte sinal de "verificação" e "crescimento" — mas exige execução cuidadosa para não parecer fintech genérica.
+    <br><br>
+    <strong style="color:#1a1a1a;">Tipografia sugerida:</strong>
+    Display: <strong>Plus Jakarta Sans</strong> (moderno, profissional, legível) · Body: <strong>Inter</strong> · Mono: <strong>JetBrains Mono</strong> (para dados/números)
+  </p>
+</div>
+
+</body>
+</html>
