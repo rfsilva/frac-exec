@@ -56,7 +56,13 @@
       "Bash(sed -i 's/  2-3-candidacy-review-decision-and-notification: in-progress/  2-3-candidacy-review-decision-and-notification: review/' \"c:/develop/bmad-method/bmad-output/implementation-artifacts/sprint-status.yaml\")",
       "Bash(sed -i 's/- \\\\[ \\\\] \\\\[Review\\\\]\\\\[Patch\\\\]/- [x] [Review][Patch]/g' \"c:/develop/bmad-method/bmad-output/implementation-artifacts/2-3-candidacy-review-decision-and-notification.md\")",
       "Bash(sed -i 's/Status: review/Status: done/' \"c:/develop/bmad-method/bmad-output/implementation-artifacts/2-3-candidacy-review-decision-and-notification.md\")",
-      "Bash(sed -i 's/  2-3-candidacy-review-decision-and-notification: review/  2-3-candidacy-review-decision-and-notification: done/' \"c:/develop/bmad-method/bmad-output/implementation-artifacts/sprint-status.yaml\")"
+      "Bash(sed -i 's/  2-3-candidacy-review-decision-and-notification: review/  2-3-candidacy-review-decision-and-notification: done/' \"c:/develop/bmad-method/bmad-output/implementation-artifacts/sprint-status.yaml\")",
+      "Bash(curl -sf http://localhost:8081/actuator/health)",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"admin@fracexec.com\",\"password\":\"Admin@FracExec2026!\"}')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('STATUS:200 totalElements='+str\\(d.get\\('totalElements','N/A'\\)\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('HTTP_STATUS:'+str\\(d.get\\('status','200'\\)\\)+' totalElements='+str\\(d.get\\('totalElements','?'\\)\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@fracexec.com\",\"password\":\"Admin@FracExec2026!\"}')",
+      "Bash(curl -sw \"\\\\nHTTP:%{http_code}\" \"http://localhost:8080/api/v1/admin/applications\" -H \"Authorization: Bearer $\\(curl -s -X POST http://localhost:8080/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@fracexec.com\",\"password\":\"Admin@FracExec2026!\"}')"
     ],
     "additionalDirectories": [
       "c:\\develop\\bmad-method\\bmad-output\\planning-artifacts\\ux-designs\\ux-FracExec-2026-05-29\\.working"

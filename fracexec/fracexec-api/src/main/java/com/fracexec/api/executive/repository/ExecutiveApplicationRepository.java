@@ -17,24 +17,30 @@ public interface ExecutiveApplicationRepository extends JpaRepository<ExecutiveA
 
     Optional<ExecutiveApplication> findFirstByEmailAndStatusIn(String email, List<ApplicationStatus> statuses);
 
-    // B2: ORDER BY createdAt DESC garante o REJECTED mais recente para o cooldown check
     @Query("SELECT a FROM ExecutiveApplication a WHERE a.email = :email AND a.status = :status ORDER BY a.createdAt DESC")
     Optional<ExecutiveApplication> findLatestByEmailAndStatus(
             @Param("email") String email,
             @Param("status") ApplicationStatus status);
 
+    // Fix: PostgreSQL cannot infer type of NULL parameters in IS NULL checks.
+    // Solution: use boolean flags to skip filters when value is absent.
+    // This avoids the "could not determine data type of parameter" error.
     @Query("""
             SELECT a FROM ExecutiveApplication a
-            WHERE (:status IS NULL OR a.status = :status)
-            AND (:name IS NULL OR LOWER(a.fullName) LIKE LOWER(CONCAT('%', :name, '%')))
-            AND (:dateFrom IS NULL OR a.createdAt >= :dateFrom)
-            AND (:dateTo IS NULL OR a.createdAt <= :dateTo)
+            WHERE (:filterStatus = false OR a.status = :status)
+            AND (:filterName = false OR LOWER(a.fullName) LIKE LOWER(CONCAT('%', :name, '%')))
+            AND (:filterDateFrom = false OR a.createdAt >= :dateFrom)
+            AND (:filterDateTo = false OR a.createdAt <= :dateTo)
             ORDER BY a.createdAt DESC
             """)
     Page<ExecutiveApplication> findWithFilters(
+            @Param("filterStatus") boolean filterStatus,
             @Param("status") ApplicationStatus status,
+            @Param("filterName") boolean filterName,
             @Param("name") String name,
+            @Param("filterDateFrom") boolean filterDateFrom,
             @Param("dateFrom") Instant dateFrom,
+            @Param("filterDateTo") boolean filterDateTo,
             @Param("dateTo") Instant dateTo,
             Pageable pageable);
 }

@@ -81,8 +81,14 @@ public class AdminApplicationServiceImpl implements AdminApplicationService {
     @Override
     public Page<ApplicationSummaryResponse> listApplications(
             ApplicationStatus status, String name, Instant dateFrom, Instant dateTo, Pageable pageable) {
-        String safeName = name != null ? escapeLikePattern(name) : null;
-        return repository.findWithFilters(status, safeName, dateFrom, dateTo, pageable)
+        // Fix: pass boolean flags to avoid PostgreSQL "could not determine data type of parameter" for NULLs
+        String safeName = name != null ? escapeLikePattern(name) : "";
+        return repository.findWithFilters(
+                status != null, status,
+                name != null && !name.isBlank(), safeName,
+                dateFrom != null, dateFrom,
+                dateTo != null, dateTo,
+                pageable)
             .map(a -> new ApplicationSummaryResponse(
                 a.getId(), a.getFullName(), a.getEmail(), a.getStatus(), a.getCreatedAt()));
     }
