@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "fracexec-octane": {
+      "command": "node",
+      "args": ["c:/develop/bmad-method/fracexec/octane-mcp/src/index.js"],
+      "env": {
+        "OCTANE_URL": "http://localhost:8090",
+        "OCTANE_SHARED_SPACE_ID": "1001",
+        "OCTANE_WORKSPACE_ID": "1003",
+        "OCTANE_USERNAME": "sa@nga",
+        "OCTANE_PASSWORD": "Welcome1"
+      }
+    }
+  }
+}

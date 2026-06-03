@@ -1,4 +1,5 @@
 {
+  "enabledMcpjsonServers": ["fracexec-octane"],
   "permissions": {
     "allow": [
       "Bash(python3 \"c:/develop/bmad-method/_bmad/scripts/resolve_customization.py\" --skill \"c:/develop/bmad-method/.claude/skills/bmad-agent-analyst\" --key agent)",
