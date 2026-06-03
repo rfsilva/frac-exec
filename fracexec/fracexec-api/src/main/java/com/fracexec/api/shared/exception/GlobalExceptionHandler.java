@@ -85,6 +85,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return pd;
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ProblemDetail handleForbidden(ForbiddenException ex) {
+        ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        pd.setType(URI.create(BASE_URI + "forbidden"));
+        pd.setTitle("Acesso negado");
+        pd.setDetail(ex.getMessage());
+        return pd;
+    }
+
     @ExceptionHandler(ConflictOfInterestException.class)
     public ProblemDetail handleConflict(ConflictOfInterestException ex) {
         ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.CONFLICT);

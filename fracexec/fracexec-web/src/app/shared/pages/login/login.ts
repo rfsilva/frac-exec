@@ -1,13 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="auth-container">
       <h1>Entrar no FracExec</h1>
@@ -36,6 +36,9 @@ import { AuthService } from '../../../core/auth/auth.service';
       </form>
 
       <a routerLink="/forgot-password">Esqueci minha senha</a>
+      <p style="margin-top:1rem;font-size:0.875rem;text-align:center">
+        É uma empresa? <a routerLink="/register">Cadastre-se aqui</a>
+      </p>
     </div>
   `,
 })

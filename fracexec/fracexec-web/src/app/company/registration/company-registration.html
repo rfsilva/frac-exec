@@ -1,0 +1,136 @@
+@if (submitted()) {
+  <!-- Tela de confirmação -->
+  <div class="register-container register-container--success">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h1 class="success-title">Cadastro recebido!</h1>
+    <p class="success-message">
+      O time FracExec ativará seu acesso em breve.<br>
+      Você receberá um e-mail quando estiver tudo pronto.
+    </p>
+    <a routerLink="/login" class="btn btn--primary">Voltar para login</a>
+  </div>
+} @else {
+  <div class="register-container">
+    <header class="register-header">
+      <h1 class="register-title">Cadastre sua empresa</h1>
+      <p class="register-subtitle">Acesse executivos C-Level verificados sob demanda.</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="register-form">
+
+      <!-- ── Dados da empresa ─────────────────────────────────── -->
+      <section class="form-section">
+        <h2 class="section-title">Dados da empresa</h2>
+
+        <div class="field">
+          <label class="label" for="legalName">Razão social *</label>
+          <input id="legalName" class="input" type="text"
+                 formControlName="legalName" autocomplete="organization">
+          @if (f['legalName'].invalid && f['legalName'].touched) {
+            <span class="error">Razão social é obrigatória.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="cnpj">CNPJ *</label>
+          <input id="cnpj" class="input" type="text"
+                 formControlName="cnpj"
+                 placeholder="XX.XXX.XXX/XXXX-XX"
+                 maxlength="18"
+                 (input)="formatCnpj($event)">
+          @if (f['cnpj'].hasError('required') && f['cnpj'].touched) {
+            <span class="error">CNPJ é obrigatório.</span>
+          } @else if (f['cnpj'].hasError('cnpjInvalid') && f['cnpj'].touched) {
+            <span class="error">CNPJ inválido. Verifique e tente novamente.</span>
+          } @else if (f['cnpj'].hasError('pattern') && f['cnpj'].touched) {
+            <span class="error">Formato inválido. Use XX.XXX.XXX/XXXX-XX.</span>
+          } @else if (f['cnpj'].hasError('cnpjTaken')) {
+            <span class="error">Este CNPJ já possui cadastro na plataforma.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="sector">Setor *</label>
+          <input id="sector" class="input" type="text"
+                 formControlName="sector"
+                 placeholder="Ex: Tecnologia, Saúde, Varejo...">
+          @if (f['sector'].invalid && f['sector'].touched) {
+            <span class="error">Setor é obrigatório.</span>
+          }
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="label" for="employeeRange">Nº de funcionários *</label>
+            <select id="employeeRange" class="input input--select" formControlName="employeeRange">
+              <option value="" disabled>Selecione</option>
+              @for (opt of employeeRanges; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            @if (f['employeeRange'].invalid && f['employeeRange'].touched) {
+              <span class="error">Selecione uma faixa.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label class="label" for="annualRevenueRange">Faturamento anual *</label>
+            <select id="annualRevenueRange" class="input input--select" formControlName="annualRevenueRange">
+              <option value="" disabled>Selecione</option>
+              @for (opt of revenueRanges; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            @if (f['annualRevenueRange'].invalid && f['annualRevenueRange'].touched) {
+              <span class="error">Selecione uma faixa.</span>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Dados do responsável ────────────────────────────── -->
+      <section class="form-section">
+        <h2 class="section-title">Responsável pelo cadastro</h2>
+
+        <div class="field">
+          <label class="label" for="responsibleName">Nome completo *</label>
+          <input id="responsibleName" class="input" type="text"
+                 formControlName="responsibleName" autocomplete="name">
+          @if (f['responsibleName'].invalid && f['responsibleName'].touched) {
+            <span class="error">Nome é obrigatório.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="responsibleEmail">E-mail profissional *</label>
+          <input id="responsibleEmail" class="input" type="email"
+                 formControlName="responsibleEmail" autocomplete="email">
+          @if (f['responsibleEmail'].hasError('required') && f['responsibleEmail'].touched) {
+            <span class="error">E-mail é obrigatório.</span>
+          } @else if (f['responsibleEmail'].hasError('email') && f['responsibleEmail'].touched) {
+            <span class="error">Informe um e-mail válido.</span>
+          } @else if (f['responsibleEmail'].hasError('emailTaken')) {
+            <span class="error">Este e-mail já possui cadastro. Acesse sua conta ou recupere a senha.</span>
+          }
+        </div>
+      </section>
+
+      <!-- ── Erro geral da API ──────────────────────────────── -->
+      @if (apiError()) {
+        <div class="api-error" role="alert">{{ apiError() }}</div>
+      }
+
+      <!-- ── Ações ─────────────────────────────────────────── -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary"
+                [disabled]="form.invalid || loading()">
+          {{ loading() ? 'Enviando...' : 'Solicitar acesso' }}
+        </button>
+      </div>
+
+      <p class="register-login-link">
+        Já tem conta? <a routerLink="/login">Entrar</a>
+      </p>
+    </form>
+  </div>
+}

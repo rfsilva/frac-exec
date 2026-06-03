@@ -1,0 +1,115 @@
+<div class="need-container">
+  <header class="need-header">
+    <h1 class="need-title">Postar Necessidade</h1>
+    <p class="need-subtitle">Descreva o desafio estratégico e o perfil C-Level que você precisa.</p>
+  </header>
+
+  <form [formGroup]="form" novalidate class="need-form">
+
+    <!-- ── Seção 1: Tipo de C-Level ─────────────────────────────── -->
+    <section class="form-section">
+      <h2 class="section-title">1. Tipo de C-Level</h2>
+      <div class="chips">
+        @for (opt of clevelOptions; track opt) {
+          <button type="button"
+                  class="chip"
+                  [class.chip--active]="selectedCLevel() === opt"
+                  (click)="selectCLevel(opt)">
+            {{ opt }}
+          </button>
+        }
+      </div>
+      @if (!selectedCLevel() && apiError()) {
+        <span class="error">Selecione o tipo de C-Level.</span>
+      }
+    </section>
+
+    <!-- ── Seção 2: Escopo ───────────────────────────────────────── -->
+    <section class="form-section">
+      <h2 class="section-title">2. Escopo</h2>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="label" for="scopeDaysPerMonth">Dias por mês *</label>
+          <select id="scopeDaysPerMonth" class="input input--select" formControlName="scopeDaysPerMonth">
+            <option value="" disabled>Selecione</option>
+            @for (opt of scopeOptions; track opt) {
+              <option [value]="opt">{{ opt }} dias/mês</option>
+            }
+          </select>
+          @if (f['scopeDaysPerMonth'].invalid && f['scopeDaysPerMonth'].touched) {
+            <span class="error">Selecione o escopo de dias por mês.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="estimatedDuration">Duração estimada</label>
+          <select id="estimatedDuration" class="input input--select" formControlName="estimatedDuration">
+            <option value="">Não definida</option>
+            <option value="3 meses">3 meses</option>
+            <option value="6 meses">6 meses</option>
+            <option value="12 meses">12 meses</option>
+            <option value="Contínuo">Contínuo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="desiredStart">Início desejado</label>
+        <input id="desiredStart" class="input" type="date" formControlName="desiredStart">
+      </div>
+    </section>
+
+    <!-- ── Seção 3: Descrição ────────────────────────────────────── -->
+    <section class="form-section">
+      <h2 class="section-title">3. Descrição</h2>
+
+      <div class="field">
+        <label class="label" for="challengeDescription">Descrição do desafio * <span class="counter">({{ charsRemaining }} restantes)</span></label>
+        <textarea id="challengeDescription" class="input input--textarea" rows="5"
+                  formControlName="challengeDescription"
+                  placeholder="Descreva o desafio estratégico que sua empresa enfrenta..."></textarea>
+        @if (f['challengeDescription'].hasError('required') && f['challengeDescription'].touched) {
+          <span class="error">Descrição é obrigatória.</span>
+        } @else if (f['challengeDescription'].hasError('minlength') && f['challengeDescription'].touched) {
+          <span class="error">Descreva o desafio com pelo menos 50 caracteres ({{ charsRemaining }} restantes).</span>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="expectedResult">Resultado esperado *</label>
+        <textarea id="expectedResult" class="input input--textarea" rows="3"
+                  formControlName="expectedResult"
+                  placeholder="Qual o resultado concreto que você espera ao final do engajamento?"></textarea>
+        @if (f['expectedResult'].invalid && f['expectedResult'].touched) {
+          <span class="error">Resultado esperado é obrigatório.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="confidentialContext">Contexto confidencial <span class="label-hint">(visível apenas ao time FracExec)</span></label>
+        <textarea id="confidentialContext" class="input input--textarea" rows="3"
+                  formControlName="confidentialContext"
+                  placeholder="Informações sensíveis que ajudem a equipe a encontrar o executivo ideal..."></textarea>
+      </div>
+    </section>
+
+    <!-- ── Erros e ações ─────────────────────────────────────────── -->
+    @if (apiError()) {
+      <div class="api-error" role="alert">{{ apiError() }}</div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn btn--secondary"
+              [disabled]="loading()"
+              (click)="onDraft()">
+        {{ loading() ? 'Salvando...' : 'Salvar rascunho' }}
+      </button>
+      <button type="button" class="btn btn--primary"
+              [disabled]="loading()"
+              (click)="onPost()">
+        {{ loading() ? 'Enviando...' : 'Postar necessidade' }}
+      </button>
+    </div>
+  </form>
+</div>

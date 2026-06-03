@@ -61,11 +61,11 @@ development_status:
   epic-2-retrospective: optional
 
   # ─── Epic 3: SMB Registration & Need Posting ──────────────────────────────
-  epic-3: backlog
-  3-1-smb-registration-form: backlog
-  3-2-smb-need-posting-form: backlog
-  3-3-smb-company-dashboard-with-need-funnel: backlog
-  3-4-admin-needs-queue: backlog
+  epic-3: in-progress
+  3-1-smb-registration-form: done
+  3-2-smb-need-posting-form: done
+  3-3-smb-company-dashboard-with-need-funnel: done
+  3-4-admin-needs-queue: done
   epic-3-retrospective: optional
 
   # ─── Epic 4: Match, Shortlist & Mediation ─────────────────────────────────

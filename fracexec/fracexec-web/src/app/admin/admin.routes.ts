@@ -38,6 +38,11 @@ export const ADMIN_ROUTES: Routes = [
           import('./needs/admin-needs').then(m => m.AdminNeeds),
       },
       {
+        path: 'companies',
+        loadComponent: () =>
+          import('./companies/admin-companies').then(m => m.AdminCompanies),
+      },
+      {
         path: 'engagements',
         loadComponent: () =>
           import('./engagements/admin-engagements').then(m => m.AdminEngagements),

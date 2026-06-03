@@ -20,6 +20,10 @@ export const routes: Routes = [
     path: 'reset-password',
     loadComponent: () => import('./shared/pages/reset-password/reset-password').then(m => m.ResetPassword),
   },
+  {
+    path: 'register',
+    loadComponent: () => import('./company/registration/company-registration').then(m => m.CompanyRegistration),
+  },
 
   // Protected portals (lazy-loaded, role-guarded)
   {

@@ -1,5 +1,8 @@
 package com.fracexec.api.shared.auth.service;
 
+import com.fracexec.api.company.Company;
+import com.fracexec.api.company.CompanyRepository;
+import com.fracexec.api.company.CompanyStatus;
 import com.fracexec.api.shared.auth.dto.AuthResponse;
 import com.fracexec.api.shared.auth.dto.ForgotPasswordRequest;
 import com.fracexec.api.shared.auth.dto.LoginRequest;
@@ -14,6 +17,7 @@ import com.fracexec.api.shared.auth.repository.PasswordResetTokenRepository;
 import com.fracexec.api.shared.auth.repository.RefreshTokenRepository;
 import com.fracexec.api.shared.auth.repository.UserRepository;
 import com.fracexec.api.shared.exception.BusinessRuleException;
+import com.fracexec.api.shared.exception.ForbiddenException;
 import com.fracexec.api.shared.exception.InvalidRequestException;
 import com.fracexec.api.shared.exception.ResourceNotFoundException;
 import com.fracexec.api.shared.exception.UnauthorizedException;
@@ -49,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender mailSender;
+    private final CompanyRepository companyRepository;
 
     @Value("${fracexec.jwt.refresh-token-expiration-days}")
     private int refreshTokenExpirationDays;
@@ -63,7 +68,8 @@ public class AuthServiceImpl implements AuthService {
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
             AuthenticationManager authenticationManager,
-            JavaMailSender mailSender) {
+            JavaMailSender mailSender,
+            CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -71,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.mailSender = mailSender;
+        this.companyRepository = companyRepository;
     }
 
     @Override
@@ -93,6 +100,16 @@ public class AuthServiceImpl implements AuthService {
             new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         User user = userRepository.findByEmail(request.email())
             .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        // PME com empresa em PENDING_ACTIVATION não pode receber JWT
+        if (user.getRole() == Role.PME) {
+            Company company = companyRepository.findByUser(user).orElse(null);
+            if (company != null && company.getStatus() == CompanyStatus.PENDING_ACTIVATION) {
+                throw new ForbiddenException(
+                    "Seu cadastro está em análise. Você receberá um e-mail quando o acesso for ativado.");
+            }
+        }
+
         log.info("Login realizado para ID [{}]", user.getId());
         return new AuthResponse(jwtUtil.generateAccessToken(user), createRefreshToken(user), user.getRole().name(), user.getEmail());
     }

@@ -54,6 +54,21 @@ public class EmailServiceImpl implements EmailService {
         sendHtml(toEmail, "Resultado da sua candidatura — FracExec", body);
     }
 
+    @Override
+    public void sendNeedReceived(String toEmail, String companyName) {
+        String body = loadTemplate("need-received.html")
+            .replace("{{companyName}}", companyName);
+        sendHtml(toEmail, "Necessidade recebida — FracExec", body);
+    }
+
+    @Override
+    public void sendCompanyActivated(String toEmail, String companyName, String firstAccessLink) {
+        String body = loadTemplate("company-activated.html")
+            .replace("{{companyName}}", companyName)
+            .replace("{{firstAccessLink}}", firstAccessLink);
+        sendHtml(toEmail, "Acesso ativado — FracExec", body);
+    }
+
     private String loadTemplate(String templateName) {
         try {
             ClassPathResource resource = new ClassPathResource(TEMPLATE_DIR + templateName);

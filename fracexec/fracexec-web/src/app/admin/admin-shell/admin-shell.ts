@@ -6,6 +6,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Candidaturas',       route: '/admin/candidates',  icon: '◉' },
   { label: 'Pool de Executivos', route: '/admin/pool',        icon: '⊟' },
   { label: 'Necessidades',       route: '/admin/needs',       icon: '◈' },
+  { label: 'Empresas',           route: '/admin/companies',   icon: '⊛' },
   { label: 'Engajamentos',       route: '/admin/engagements', icon: '⊡' },
   { label: 'Contratos',          route: '/admin/contracts',   icon: '⊠' },
 ];
