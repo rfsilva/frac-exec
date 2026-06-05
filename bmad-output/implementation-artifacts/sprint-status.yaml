@@ -69,13 +69,13 @@ development_status:
   epic-3-retrospective: optional
 
   # ─── Epic 4: Match, Shortlist & Mediation ─────────────────────────────────
-  epic-4: backlog
-  4-1-conflict-of-interest-registry: backlog
-  4-2-shortlist-builder-split-view: backlog
-  4-3-conflict-review-and-admin-decision: backlog
-  4-4-anonymized-profiles-and-smb-selection: backlog
-  4-5-executive-opportunity-response: backlog
-  4-6-mediation-thread: backlog
+  epic-4: done
+  4-1-conflict-of-interest-registry: done
+  4-2-shortlist-builder-split-view: done
+  4-3-conflict-review-and-admin-decision: done
+  4-4-anonymized-profiles-and-smb-selection: done
+  4-5-executive-opportunity-response: done
+  4-6-mediation-thread: done
   epic-4-retrospective: optional
 
   # ─── Epic 5: Contract, Payments & Engagements ─────────────────────────────

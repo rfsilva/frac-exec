@@ -62,6 +62,40 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendBothDeclined(String adminEmail, String needId) {
+        String body = "<p>Ambos os executivos declinaram a necessidade <strong>" + needId
+            + "</strong>. A necessidade voltou para UNDER_ANALYSIS e requer um novo ciclo de shortlist.</p>";
+        sendHtml(adminEmail, "Atenção: Ambos os executivos declinaram — FracExec", body);
+    }
+
+    @Override
+    public void sendNewMediationMessage(String toEmail, String senderLabel, String contentPreview) {
+        String body = "<p>Nova mensagem de <strong>" + senderLabel + "</strong> na plataforma FracExec:</p>"
+            + "<blockquote>" + contentPreview + "</blockquote>"
+            + "<p>Acesse o portal para ver a mensagem completa.</p>";
+        sendHtml(toEmail, "Nova mensagem no FracExec", body);
+    }
+
+    @Override
+    public void sendOpportunityAvailable(String toEmail, String cLevelType, String sector,
+                                         String employeeRange, String scopeDays, String challengeSummary) {
+        String body = loadTemplate("opportunity-available.html")
+            .replace("{{cLevelType}}", cLevelType)
+            .replace("{{sector}}", sector)
+            .replace("{{employeeRange}}", employeeRange)
+            .replace("{{scopeDays}}", scopeDays)
+            .replace("{{challengeSummary}}", challengeSummary);
+        sendHtml(toEmail, "Nova oportunidade disponível — FracExec", body);
+    }
+
+    @Override
+    public void sendShortlistSent(String toEmail, String companyName) {
+        String body = loadTemplate("shortlist-sent.html")
+            .replace("{{companyName}}", companyName);
+        sendHtml(toEmail, "Shortlist disponível para revisão — FracExec", body);
+    }
+
+    @Override
     public void sendCompanyActivated(String toEmail, String companyName, String firstAccessLink) {
         String body = loadTemplate("company-activated.html")
             .replace("{{companyName}}", companyName)

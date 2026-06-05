@@ -1,5 +1,8 @@
 package com.fracexec.api.shared.config;
 
+import com.fracexec.api.executive.repository.ExecutiveProfileRepository;
+import com.fracexec.api.match.ExecutiveClient;
+import com.fracexec.api.match.ExecutiveClientRepository;
 import com.fracexec.api.shared.auth.model.Role;
 import com.fracexec.api.shared.auth.model.User;
 import com.fracexec.api.shared.auth.repository.UserRepository;
@@ -34,6 +37,26 @@ public class DataInitializer {
             } else {
                 log.info("DataInitializer: ADMIN user already exists, skipping seed");
             }
+        };
+    }
+
+    // Seed de clientes para testes de conflito de interesses (5 CNAEs distintos)
+    @Bean
+    public ApplicationRunner seedExecutiveClients(ExecutiveProfileRepository profileRepository,
+                                                   ExecutiveClientRepository clientRepository) {
+        return args -> {
+            if (clientRepository.count() > 0) return; // já semeado
+            profileRepository.findAll().stream().findFirst().ifPresent(profile -> {
+                var clients = java.util.List.of(
+                    new ExecutiveClient(profile, "62", "SP", "São Paulo", "E_51_200"),   // TI/Software
+                    new ExecutiveClient(profile, "47", "RJ", "Rio de Janeiro", "E_11_50"), // Varejo
+                    new ExecutiveClient(profile, "86", "MG", "Belo Horizonte", "E_201_500"), // Saúde
+                    new ExecutiveClient(profile, "41", "PR", "Curitiba", "E_11_50"),      // Construção
+                    new ExecutiveClient(profile, "49", "RS", "Porto Alegre", "E_1_10")    // Transporte
+                );
+                clientRepository.saveAll(clients);
+                log.info("DataInitializer: seeded {} executive clients for conflict testing", clients.size());
+            });
         };
     }
 }

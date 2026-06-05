@@ -18,6 +18,11 @@ export const COMPANY_ROUTES: Routes = [
           import('./need/company-need-new').then(m => m.CompanyNeedNew),
       },
       {
+        path: 'need/:id',
+        loadComponent: () =>
+          import('./need/company-need-detail').then(m => m.CompanyNeedDetail),
+      },
+      {
         path: 'payments',
         loadComponent: () =>
           import('./payments/company-payments').then(m => m.CompanyPayments),

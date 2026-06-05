@@ -38,6 +38,16 @@ export const ADMIN_ROUTES: Routes = [
           import('./needs/admin-needs').then(m => m.AdminNeeds),
       },
       {
+        path: 'needs/:id/shortlist',
+        loadComponent: () =>
+          import('./shortlist/shortlist-builder').then(m => m.ShortlistBuilder),
+      },
+      {
+        path: 'conflicts/:id',
+        loadComponent: () =>
+          import('./conflicts/conflict-review').then(m => m.ConflictReview),
+      },
+      {
         path: 'companies',
         loadComponent: () =>
           import('./companies/admin-companies').then(m => m.AdminCompanies),

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { Subject, switchMap } from 'rxjs';
 import { SlicePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { StatusBadge, BadgeVariant } from '../../shared/components/status-badge/status-badge';
 import { LoadingSkeleton } from '../../shared/components/loading-skeleton/loading-skeleton';
 
@@ -21,7 +22,7 @@ const STATUS_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-admin-needs',
   standalone: true,
-  imports: [StatusBadge, LoadingSkeleton, SlicePipe],
+  imports: [StatusBadge, LoadingSkeleton, SlicePipe, RouterLink],
   template: `
     <div class="page-body">
       <h1 class="page-title">Necessidades</h1>
@@ -73,6 +74,12 @@ const STATUS_LABELS: Record<string, string> = {
                             (click)="startAnalysis(need); $event.stopPropagation()">
                       Iniciar análise
                     </button>
+                  }
+                  @if (need.status === 'UNDER_ANALYSIS' || need.status === 'SHORTLIST_SENT') {
+                    <a [routerLink]="['/admin/needs', need.id, 'shortlist']"
+                       class="btn btn--primary" (click)="$event.stopPropagation()">
+                      Construir shortlist
+                    </a>
                   }
                 </div>
               }

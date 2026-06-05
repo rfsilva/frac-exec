@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.fracexec.api.shared.auth.model.User;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ public interface ExecutiveProfileRepository extends JpaRepository<ExecutiveProfi
 
     Optional<ExecutiveProfile> findByUserId(UUID userId);
     boolean existsByUserId(UUID userId);
+    Optional<ExecutiveProfile> findByUser(User user);
 
     // B1: EXISTS subqueries instead of LEFT JOIN to avoid DISTINCT overcounting
     // B2: completeness (bio + specialties) checked inline, consistent with ExecutiveProfile.isComplete()
