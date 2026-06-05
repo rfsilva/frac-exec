@@ -94,3 +94,12 @@ development_status:
   6-3-lgpd-compliance-and-data-deletion: backlog
   6-4-production-readiness-and-observability: backlog
   epic-6-retrospective: optional
+
+  # ─── Epic 7: AWS Infrastructure & Production Deployment ──────────────────
+  epic-7: backlog
+  7-1-terraform-networking-compute: backlog
+  7-2-terraform-database-storage: backlog
+  7-3-terraform-cloudfront-dns: backlog
+  7-4-pipeline-cicd-github-actions: backlog
+  7-5-application-prod-yml-code-adjustments: backlog
+  epic-7-retrospective: optional
