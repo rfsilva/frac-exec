@@ -62,6 +62,35 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendContractReady(String toEmail, String name, String downloadUrl) {
+        String body = loadTemplate("contract-ready.html")
+            .replace("{{name}}", name)
+            .replace("{{downloadUrl}}", downloadUrl);
+        sendHtml(toEmail, "Contrato disponível para assinatura — FracExec", body);
+    }
+
+    @Override
+    public void sendPaymentProcessed(String toEmail, java.math.BigDecimal grossAmount,
+                                     java.math.BigDecimal feeAmount, java.math.BigDecimal netAmount,
+                                     java.time.Instant transferDate) {
+        String body = "<p>Seu repasse foi processado:</p>"
+            + "<p>Valor bruto: <strong>R$ " + grossAmount + "</strong></p>"
+            + "<p>Taxa FracExec (18%): R$ " + feeAmount + "</p>"
+            + "<p>Valor líquido: <strong>R$ " + netAmount + "</strong></p>"
+            + "<p>Data de crédito: " + transferDate + "</p>";
+        sendHtml(toEmail, "Repasse processado — FracExec", body);
+    }
+
+    @Override
+    public void sendPaymentReceipt(String toEmail, java.math.BigDecimal grossAmount,
+                                   java.time.Instant paidDate) {
+        String body = "<p>Comprovante de pagamento:</p>"
+            + "<p>Valor pago: <strong>R$ " + grossAmount + "</strong></p>"
+            + "<p>Data: " + paidDate + "</p>";
+        sendHtml(toEmail, "Comprovante de pagamento — FracExec", body);
+    }
+
+    @Override
     public void sendBothDeclined(String adminEmail, String needId) {
         String body = "<p>Ambos os executivos declinaram a necessidade <strong>" + needId
             + "</strong>. A necessidade voltou para UNDER_ANALYSIS e requer um novo ciclo de shortlist.</p>";

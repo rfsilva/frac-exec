@@ -79,12 +79,12 @@ development_status:
   epic-4-retrospective: optional
 
   # ─── Epic 5: Contract, Payments & Engagements ─────────────────────────────
-  epic-5: backlog
-  5-1-contract-generation-and-signature: backlog
-  5-2-stripe-integration-and-recurring-payment: backlog
-  5-3-escrow-window-and-executive-transfer: backlog
-  5-4-executive-payment-dashboard: backlog
-  5-5-smb-contract-and-payment-history: backlog
+  epic-5: done
+  5-1-contract-generation-and-signature: done
+  5-2-stripe-integration-and-recurring-payment: done
+  5-3-escrow-window-and-executive-transfer: done
+  5-4-executive-payment-dashboard: done
+  5-5-smb-contract-and-payment-history: done
   epic-5-retrospective: optional
 
   # ─── Epic 6: Complete Dashboards, Admin Operations & Production Readiness ──

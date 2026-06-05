@@ -13,4 +13,7 @@ public interface EmailService {
                                   String employeeRange, String scopeDays, String challengeSummary);
     void sendBothDeclined(String adminEmail, String needId);
     void sendNewMediationMessage(String toEmail, String senderLabel, String contentPreview);
+    void sendContractReady(String toEmail, String name, String downloadUrl);
+    void sendPaymentProcessed(String toEmail, java.math.BigDecimal grossAmount, java.math.BigDecimal feeAmount, java.math.BigDecimal netAmount, java.time.Instant transferDate);
+    void sendPaymentReceipt(String toEmail, java.math.BigDecimal grossAmount, java.time.Instant paidDate);
 }
