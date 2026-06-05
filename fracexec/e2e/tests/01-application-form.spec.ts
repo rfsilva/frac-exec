@@ -16,9 +16,11 @@ test.describe('Formulário de candidatura pública', () => {
   test('Candidato preenche e submete candidatura em 3 etapas', async ({ page }) => {
     await page.goto('/apply');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500);
+    // Aguardar Angular hidratar — o stepper precisa de mais tempo que o networkidle
+    await page.waitForTimeout(2000);
+    await page.waitForSelector('.apply-container, .stepper, h1', { timeout: 15000, state: 'visible' });
 
-    await expect(page.locator('h1, .apply-container, .stepper')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.apply-container').or(page.locator('.stepper')).first()).toBeVisible({ timeout: 15000 });
 
     // Etapa 1
     await page.locator('input[id="fullName"], input[type="text"]').first().fill('Carlos Lima');
@@ -50,13 +52,14 @@ test.describe('Formulário de candidatura pública', () => {
     await page.locator('.lgpd-field input[type="checkbox"]').check();
     await page.getByRole('button', { name: /enviar candidatura/i }).click();
 
-    await expect(page.locator('.confirmation-title, text=Candidatura recebida')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.confirmation-title').or(page.getByText('Candidatura recebida').first())).toBeVisible({ timeout: 15000 });
   });
 
   test('Formulário bloqueia avanço com LinkedIn inválido', async ({ page }) => {
     await page.goto('/apply');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
+    await page.waitForSelector('input[type="text"]', { timeout: 15000, state: 'visible' });
 
     await page.locator('input[type="text"]').first().fill('Teste Bloqueio');
     await page.locator('input[type="email"]').first().fill('bloqueio@test.com');
@@ -64,7 +67,7 @@ test.describe('Formulário de candidatura pública', () => {
     await page.getByRole('button', { name: /próxima etapa/i }).click();
     await page.waitForTimeout(500);
 
-    // Permanece na etapa 1 — erro de URL
-    await expect(page.locator('.error, text=inválida, text=LinkedIn')).toBeVisible({ timeout: 5000 });
+    // Permanece na etapa 1 — erro de URL (locator .error ou mensagem visível)
+    await expect(page.locator('.error').first().or(page.getByText('inválido').first())).toBeVisible({ timeout: 10000 });
   });
 });

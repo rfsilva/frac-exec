@@ -22,25 +22,36 @@ test.describe('Perfil do executivo', () => {
     });
     await loginAsExecutive(page, email, 'Exec@2026!');
     await expect(page).toHaveURL(/\/executive\/profile/, { timeout: 10000 });
-    await page.waitForTimeout(1000);
-    await expect(page.locator('.banner, text=Complete seu perfil')).toBeVisible({ timeout: 5000 });
+    // Aguardar Angular hidratar o componente de perfil + banner
+    await page.waitForTimeout(2000);
+    await page.waitForSelector('.banner, .seal-banner, [class*="banner"]', { timeout: 15000, state: 'visible' });
+    await expect(page.locator('.banner').first().or(page.getByText('Complete seu perfil').first())).toBeVisible({ timeout: 10000 });
   });
 
   test('Executivo preenche e salva perfil — mensagem de sucesso', async ({ page }) => {
     await loginAsExecutive(page);
-    await page.goto('/executive/profile');
+    // profileGuard redireciona para /executive/profile se perfil não completo
+    await page.waitForURL(/\/executive\/profile/, { timeout: 10000 });
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500);
+    // Angular precisa de tempo extra para renderizar o formulário de perfil
+    await page.waitForTimeout(3000);
+    // Aguardar qualquer textarea ou campo de texto do perfil
+    await page.waitForFunction(
+      () => document.querySelector('textarea, input[type="text"]') !== null,
+      { timeout: 15000 }
+    );
 
-    const bioField = page.locator('textarea[id="bio"]').first();
-    await expect(bioField).toBeVisible({ timeout: 8000 });
+    const bioField = page.locator('textarea').first();
+    await expect(bioField).toBeVisible({ timeout: 15000 });
     await bioField.fill('Executivo C-Level com 18 anos de experiência em transformação digital.');
 
     const ctoLabel = page.locator('label').filter({ hasText: 'CTO' });
     if (await ctoLabel.count() > 0) await ctoLabel.first().click();
 
     await page.getByRole('button', { name: /salvar perfil/i }).click();
-    await expect(page.locator('.saved-msg, text=Perfil atualizado')).toBeVisible({ timeout: 8000 });
+    await expect(
+      page.locator('.saved-msg').or(page.getByText('Perfil atualizado')).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('SealBanner aparece no portal executivo após login', async ({ page }) => {

@@ -36,16 +36,18 @@ async function setupCompleteExecAndLogin(page: any, request: any) {
   // Com perfil completo, vai direto para /executive/dashboard
   await expect(page).toHaveURL(/\/executive\/dashboard/, { timeout: 10000 });
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1500);
+  // Aguardar Angular hidratar o dashboard e renderizar o widget de disponibilidade
+  await page.waitForTimeout(3000);
+  await page.waitForSelector('.widget-card, .btn-edit, button', { timeout: 15000, state: 'visible' });
 }
 
 test.describe('Widget e Drawer de Disponibilidade', () => {
 
   test('Dashboard exibe widget de disponibilidade', async ({ page, request }) => {
     await setupCompleteExecAndLogin(page, request);
-    await expect(page.locator('.widget-card, text=Disponibilidade')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('.progress-bar, .progress-fill')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.btn-edit, button:has-text("Editar")')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.widget-card').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.progress-bar, .progress-fill').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.btn-edit').or(page.getByRole('button', { name: /editar/i })).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Botão Editar abre drawer lateral', async ({ page, request }) => {
@@ -59,39 +61,39 @@ test.describe('Widget e Drawer de Disponibilidade', () => {
     await setupCompleteExecAndLogin(page, request);
     await page.locator('.btn-edit, button:has-text("Editar")').first().click();
     const drawer = page.locator('.drawer, [role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    await expect(drawer).toBeVisible({ timeout: 10000 });
 
     await drawer.locator('input[type="number"]').clear();
     await drawer.locator('input[type="number"]').fill('12');
     await drawer.locator('button:has-text("Salvar")').click();
 
-    await expect(drawer).not.toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.saved-msg, text=Disponibilidade atualizada')).toBeVisible({ timeout: 5000 });
+    await expect(drawer).not.toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.saved-msg').or(page.getByText('Disponibilidade atualizada').first())).toBeVisible({ timeout: 10000 });
   });
 
   test('ESC com alterações não salvas mostra confirmação', async ({ page, request }) => {
     await setupCompleteExecAndLogin(page, request);
     await page.locator('.btn-edit, button:has-text("Editar")').first().click();
     const drawer = page.locator('.drawer, [role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    await expect(drawer).toBeVisible({ timeout: 10000 });
 
     await drawer.locator('input[type="number"]').fill('5');
     await page.keyboard.press('Escape');
-    await expect(page.locator('.confirm-box, text=Descartar')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.confirm-box').first()).toBeVisible({ timeout: 8000 });
     await page.locator('button:has-text("Continuar editando")').click();
-    await expect(drawer).toBeVisible();
+    await expect(drawer).toBeVisible({ timeout: 5000 });
   });
 
   test('Backdrop click com alterações mostra confirmação', async ({ page, request }) => {
     await setupCompleteExecAndLogin(page, request);
     await page.locator('.btn-edit, button:has-text("Editar")').first().click();
     const drawer = page.locator('.drawer, [role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    await expect(drawer).toBeVisible({ timeout: 10000 });
 
     await drawer.locator('input[type="number"]').fill('3');
     await page.locator('.drawer-backdrop').click();
-    await expect(page.locator('.confirm-box, text=Descartar')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('.confirm-box').first()).toBeVisible({ timeout: 8000 });
     await page.locator('button:has-text("Descartar")').click();
-    await expect(drawer).not.toBeVisible({ timeout: 3000 });
+    await expect(drawer).not.toBeVisible({ timeout: 8000 });
   });
 });

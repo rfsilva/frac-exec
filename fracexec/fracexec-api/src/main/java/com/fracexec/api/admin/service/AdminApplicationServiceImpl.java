@@ -129,6 +129,11 @@ public class AdminApplicationServiceImpl implements AdminApplicationService {
             throw new BusinessRuleException("Transição inválida: " + app.getStatus() + " → " + request.status());
         }
         app.setStatus(request.status());
+        // FR-1.7: ao rejeitar via updateStatus, setar canReapplyAfter para 6 meses
+        if (request.status() == ApplicationStatus.REJECTED && app.getCanReapplyAfter() == null) {
+            Instant base = app.getCreatedAt() != null ? app.getCreatedAt() : Instant.now();
+            app.setCanReapplyAfter(base.plus(180, ChronoUnit.DAYS));
+        }
         repository.save(app);
         return toSummary(app);
     }

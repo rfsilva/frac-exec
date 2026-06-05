@@ -156,20 +156,22 @@ async function buildTests() {
       },
     },
 
-    // ── T23D — Cooldown (BUG DOCUMENTADO) ─────────────────────────────────────
+    // ── T23D — Cooldown 6 meses ────────────────────────────────────────────────
     {
       octaneTestId: '1023',
       name: 'T23D: Cooldown 6 meses — novo attempt após rejeição',
       run: async () => {
+        // Aguardar 1s para garantir que o commit da rejeição de T23C foi processado no banco
+        await sleep(1000);
         const r = await call('POST', '/applications', applicationBody(`${ts_suffix}d`, {
           email: `reject.${ts_suffix}@example.com`,
         }));
-        // API não implementa cooldown — retorna 201 (bug documentado)
-        // Marcamos como FAIL para rastreabilidade no Octane
+        // Backend seta canReapplyAfter = createdAt + 180 dias no reject
+        // Portanto nova tentativa imediata deve retornar 422
         const hasCooldown = r.status === 422 || r.status === 409;
         const note = hasCooldown
-          ? 'Cooldown implementado corretamente.'
-          : `BUG: API aceitou nova candidatura (${r.status}) após rejeição. Cooldown de 6 meses não implementado.`;
+          ? 'Cooldown funcionando: API bloqueou nova candidatura dentro do período de 6 meses.'
+          : `FAIL: API aceitou nova candidatura (${r.status}) após rejeição — cooldown não bloqueou.`;
         return { ok: hasCooldown, evidence: r.evidence + `\n\n=== ANÁLISE ===\n${note}` };
       },
     },

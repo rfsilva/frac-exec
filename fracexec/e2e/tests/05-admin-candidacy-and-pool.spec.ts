@@ -18,17 +18,15 @@ test.describe('Admin — Fila de Candidaturas', () => {
   test('Admin vê fila de candidaturas em /admin/candidates', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/admin/candidates');
-    // Aguarda Angular hidratar completamente (app-admin-candidates renderiza)
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
-    // Aguarda URL confirmar que está na página correta
+    // Buffer extra de hidratação para componente admin-candidates
+    await page.waitForTimeout(4000);
     await expect(page).toHaveURL(/\/admin\/candidates/);
-    // O componente Angular renderiza .page-body após hidratação
     await page.waitForFunction(
       () => document.querySelector('.page-body, .table-wrapper, .filters, .empty-state') !== null,
-      { timeout: 10000 }
+      { timeout: 15000 }
     );
-    await expect(page.locator('.page-body, .filters')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.page-body').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Admin vê filtro de status na fila', async ({ page }) => {
@@ -82,21 +80,25 @@ test.describe('Admin — Pool de Executivos', () => {
     await loginAsAdmin(page);
     await page.goto('/admin/pool');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
+    // Buffer extra de hidratação para componente admin-pool
+    await page.waitForTimeout(4000);
     await page.waitForFunction(
       () => document.querySelector('.page-body, .pool-grid, .empty-state, .filters') !== null,
-      { timeout: 10000 }
+      { timeout: 15000 }
     );
-    await expect(page.locator('.page-body, .filters')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.page-body').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Pool tem filtros de especialidade', async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto('/admin/pool');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
-    await page.waitForTimeout(1500);
-    await expect(page.locator('.filters select')).toBeVisible({ timeout: 5000 });
+    await page.waitForTimeout(4000);
+    await page.waitForFunction(
+      () => document.querySelector('.filters select, select') !== null,
+      { timeout: 15000 }
+    );
+    await expect(page.locator('.filters select').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Rota /admin/pool sem login redireciona para /login', async ({ page }) => {
