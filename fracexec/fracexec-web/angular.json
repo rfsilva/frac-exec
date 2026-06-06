@@ -70,7 +70,15 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "configurations": {
+            "ci": {
+              "reporters": ["verbose"],
+              "coverage": true,
+              "coverageReporters": ["lcov", "text-summary"],
+              "coverageDirectory": "coverage"
+            }
+          }
         }
       }
     }

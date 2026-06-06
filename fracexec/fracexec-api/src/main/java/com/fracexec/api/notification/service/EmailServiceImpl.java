@@ -91,6 +91,15 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendDeletionRequestConfirmation(String toEmail) {
+        String body = "<p>Sua solicitação de exclusão de dados foi recebida.</p>"
+            + "<p>Seus dados pessoais serão anonimizados em até <strong>30 dias</strong>.</p>"
+            + "<p>Contratos e histórico financeiro são preservados por obrigação legal.</p>"
+            + "<p>Equipe FracExec</p>";
+        sendHtml(toEmail, "Solicitação de exclusão recebida — FracExec", body);
+    }
+
+    @Override
     public void sendBothDeclined(String adminEmail, String needId) {
         String body = "<p>Ambos os executivos declinaram a necessidade <strong>" + needId
             + "</strong>. A necessidade voltou para UNDER_ANALYSIS e requer um novo ciclo de shortlist.</p>";

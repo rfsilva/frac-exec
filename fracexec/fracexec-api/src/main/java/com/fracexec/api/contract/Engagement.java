@@ -42,6 +42,12 @@ public class Engagement {
     @Column(name = "started_at")
     private Instant startedAt;
 
+    @Column(name = "status_reason", columnDefinition = "TEXT")
+    private String statusReason;
+
+    @Column(name = "status_updated_at")
+    private Instant statusUpdatedAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
@@ -72,4 +78,8 @@ public class Engagement {
     public Instant          getStartedAt()        { return startedAt; }
     public void             setStartedAt(Instant t) { this.startedAt = t; }
     public Instant          getCreatedAt()        { return createdAt; }
+    public String           getStatusReason()     { return statusReason; }
+    public void             setStatusReason(String r) { this.statusReason = r; }
+    public Instant          getStatusUpdatedAt()  { return statusUpdatedAt; }
+    public void             setStatusUpdatedAt(Instant t) { this.statusUpdatedAt = t; }
 }

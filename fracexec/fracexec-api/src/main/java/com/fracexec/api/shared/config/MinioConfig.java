@@ -7,6 +7,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -41,28 +43,43 @@ public class MinioConfig {
     @Value("${fracexec.minio.buckets.contracts}")
     private String contractsBucket;
 
+    /**
+     * Em produção (endpoint vazio): usa IAM Role via DefaultCredentialsProvider.
+     * Em local/dev (endpoint configurado): usa chaves estáticas para MinIO.
+     */
+    private AwsCredentialsProvider credentialsProvider() {
+        return (endpoint == null || endpoint.isBlank())
+            ? DefaultCredentialsProvider.create()
+            : StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
+    }
+
     @Bean
     public StaticCredentialsProvider minioCredentials() {
-        return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
+        return StaticCredentialsProvider.create(AwsBasicCredentials.create(
+            accessKey != null ? accessKey : "placeholder",
+            secretKey != null ? secretKey : "placeholder"));
     }
 
     @Bean
-    public S3Client s3Client(StaticCredentialsProvider minioCredentials) {
-        return S3Client.builder()
-            .endpointOverride(URI.create(endpoint))
-            .credentialsProvider(minioCredentials)
-            .region(Region.US_EAST_1)
-            .forcePathStyle(true)
-            .build();
+    public S3Client s3Client() {
+        var builder = S3Client.builder()
+            .credentialsProvider(credentialsProvider())
+            .region(Region.US_EAST_1);
+        if (endpoint != null && !endpoint.isBlank()) {
+            builder.endpointOverride(URI.create(endpoint)).forcePathStyle(true);
+        }
+        return builder.build();
     }
 
     @Bean
-    public S3Presigner s3Presigner(StaticCredentialsProvider minioCredentials) {
-        return S3Presigner.builder()
-            .endpointOverride(URI.create(endpoint))
-            .credentialsProvider(minioCredentials)
-            .region(Region.US_EAST_1)
-            .build();
+    public S3Presigner s3Presigner() {
+        var builder = S3Presigner.builder()
+            .credentialsProvider(credentialsProvider())
+            .region(Region.US_EAST_1);
+        if (endpoint != null && !endpoint.isBlank()) {
+            builder.endpointOverride(URI.create(endpoint));
+        }
+        return builder.build();
     }
 
     @Bean

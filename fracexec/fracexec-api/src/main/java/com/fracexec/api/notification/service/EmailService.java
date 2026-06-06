@@ -16,4 +16,5 @@ public interface EmailService {
     void sendContractReady(String toEmail, String name, String downloadUrl);
     void sendPaymentProcessed(String toEmail, java.math.BigDecimal grossAmount, java.math.BigDecimal feeAmount, java.math.BigDecimal netAmount, java.time.Instant transferDate);
     void sendPaymentReceipt(String toEmail, java.math.BigDecimal grossAmount, java.time.Instant paidDate);
+    void sendDeletionRequestConfirmation(String toEmail);
 }

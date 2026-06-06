@@ -159,6 +159,30 @@ const MAX_WORDS = 300;
           </div>
 
         </form>
+
+        <!-- Story 6.3: LGPD — Exclusão de conta -->
+        <div class="privacy-section">
+          <h3 class="privacy-title">Privacidade e dados</h3>
+          @if (!deleteConfirm()) {
+            <button class="btn-danger" (click)="deleteConfirm.set(true)">
+              Solicitar exclusão de conta
+            </button>
+          } @else {
+            <div class="delete-modal">
+              <p class="delete-text">
+                Seus dados pessoais serão removidos em até <strong>30 dias</strong>.
+                Engajamentos ativos serão encerrados. Contratos assinados são preservados por obrigação legal.
+              </p>
+              @if (deleteMsg()) { <p class="delete-feedback">{{ deleteMsg() }}</p> }
+              <div class="delete-actions">
+                <button class="btn-secondary" (click)="deleteConfirm.set(false)">Cancelar</button>
+                <button class="btn-danger" [disabled]="deleting()" (click)="requestDeletion()">
+                  {{ deleting() ? 'Enviando...' : 'Confirmar exclusão' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
       }
     </div>
   `,
@@ -233,6 +257,14 @@ const MAX_WORDS = 300;
     }
     .saved-msg { font-size: 13px; color: var(--color-state-success); margin: 0; }
     .error { font-size: 12px; color: var(--color-state-error); margin: var(--spacing-1) 0 0; }
+    .privacy-section { margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid var(--color-border-default); }
+    .privacy-title { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); margin: 0 0 var(--spacing-3); }
+    .btn-danger { padding: var(--spacing-2) var(--spacing-4); background: #dc2626; color: #fff; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+    .delete-modal { background: #fff5f5; border: 1px solid #fca5a5; border-radius: var(--radius-md); padding: var(--spacing-4); display: flex; flex-direction: column; gap: var(--spacing-3); }
+    .delete-text { font-size: 13px; color: var(--color-text-primary); margin: 0; line-height: 1.5; }
+    .delete-feedback { font-size: 13px; color: #1b5e20; margin: 0; }
+    .delete-actions { display: flex; gap: var(--spacing-3); }
   `]
 })
 export class ExecutiveProfile {
@@ -376,6 +408,21 @@ export class ExecutiveProfile {
           this.errorMsg.set(
             err.error?.detail ?? 'Não foi possível salvar o perfil. Tente novamente.');
         },
+      });
+  }
+
+  // Story 6.3: LGPD
+  readonly deleteConfirm = signal(false);
+  readonly deleting      = signal(false);
+  readonly deleteMsg     = signal<string | null>(null);
+
+  requestDeletion(): void {
+    this.deleting.set(true);
+    this.http.post<{ message: string }>('/api/v1/account/deletion-request', {})
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: r => { this.deleting.set(false); this.deleteMsg.set(r.message); this.deleteConfirm.set(false); },
+        error: () => { this.deleting.set(false); this.deleteMsg.set('Erro ao processar solicitação. Tente novamente.'); },
       });
   }
 }

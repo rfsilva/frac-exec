@@ -1,0 +1,65 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ["CI — Build & Test"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy API + Frontend
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ── Deploy API na EC2 ─────────────────────────────────────────────────
+      - name: Deploy API to EC2
+        env:
+          EC2_HOST:     ${{ secrets.EC2_HOST }}
+          EC2_KEY:      ${{ secrets.EC2_SSH_KEY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG:    ${{ github.sha }}
+        run: |
+          echo "$EC2_KEY" > /tmp/key.pem && chmod 600 /tmp/key.pem
+          ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ec2-user@$EC2_HOST \
+            "AWS_REGION=us-east-1 \
+             ECR_REGISTRY=$ECR_REGISTRY \
+             IMAGE_TAG=$IMAGE_TAG \
+             bash /opt/fracexec/scripts/deploy.sh"
+
+      # ── Deploy Frontend para S3 + invalidar CloudFront ───────────────────
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: fracexec/fracexec-web/package-lock.json
+
+      - name: Build Angular
+        working-directory: fracexec/fracexec-web
+        run: npm ci && npx ng build --configuration=production
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync fracexec/fracexec-web/dist/fracexec-web/browser \
+            s3://fracexec-web-prod --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ID }} \
+            --paths "/*"
