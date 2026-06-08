@@ -6,20 +6,17 @@ on:
   pull_request:
     branches: [main, develop]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   backend:
     name: Backend (Maven + Tests)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -32,14 +29,14 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
 
       - name: Upload JaCoCo report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jacoco-report
           path: fracexec/fracexec-api/target/site/jacoco/jacoco.xml
           if-no-files-found: warn
 
       - name: Upload compiled classes
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: java-classes
           path: fracexec/fracexec-api/target/classes
@@ -49,12 +46,12 @@ jobs:
     name: Frontend (Angular Build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -72,7 +69,7 @@ jobs:
         run: npx ng test --configuration=ci --watch=false
 
       - name: Upload lcov report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: lcov-report
           path: fracexec/fracexec-web/coverage/lcov.info
@@ -87,25 +84,25 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Download JaCoCo report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: jacoco-report
           path: fracexec/fracexec-api/target/site/jacoco
 
       - name: Download Java classes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: java-classes
           path: fracexec/fracexec-api/target/classes
 
       - name: Download lcov report
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: lcov-report
           path: fracexec/fracexec-web/coverage
@@ -124,7 +121,7 @@ jobs:
     needs: [sonar]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
