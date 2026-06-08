@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Dashboard do Executivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-primary:   #132A1E;
+    --brand-deep:      #1F4A32;
+    --brand-accent:    #4DC78A;
+    --brand-accent-lt: #DCEEE4;
+    --surface-bg:      #F2F7F4;
+    --surface-card:    #FFFFFF;
+    --surface-muted:   #EDF4F0;
+    --text-primary:    #0D1F15;
+    --text-secondary:  #4A6358;
+    --text-muted:      #8BA898;
+    --text-inverse:    #EAF2EE;
+    --border:          #C8E0D2;
+    --border-strong:   #9FC4B0;
+    --state-success:   #27AE60;
+    --state-warning:   #E67E22;
+    --state-error:     #E74C3C;
+    --radius-sm:       6px;
+    --radius-md:       10px;
+    --radius-lg:       16px;
+    --radius-xl:       20px;
+    --radius-full:     9999px;
+    --shadow-sm:       0 1px 4px rgba(19,42,30,.06);
+    --shadow-md:       0 4px 16px rgba(19,42,30,.09);
+    --font-display:    'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body:       'Inter', system-ui, sans-serif;
+    --font-mono:       'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--surface-bg); color: var(--text-primary); min-height: 100vh; display: flex; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 240px; min-height: 100vh; background: var(--brand-primary);
+    display: flex; flex-direction: column; padding: 0; flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-logo {
+    padding: 28px 24px 24px;
+    border-bottom: 1px solid rgba(77,199,138,.15);
+  }
+  .logo-text {
+    font-family: var(--font-display); font-weight: 800; font-size: 20px;
+    color: var(--brand-accent); letter-spacing: -.02em;
+  }
+  .logo-sub { font-size: 10px; color: rgba(234,242,238,.5); letter-spacing: .1em; text-transform: uppercase; margin-top: 2px; }
+  .nav-section-label {
+    font-size: 10px; color: rgba(234,242,238,.35); letter-spacing: .12em;
+    text-transform: uppercase; padding: 20px 24px 8px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 24px; font-size: 13.5px; font-weight: 500;
+    color: rgba(234,242,238,.65); cursor: pointer; transition: all .15s;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { color: var(--text-inverse); background: rgba(77,199,138,.07); }
+  .nav-item.active {
+    color: var(--brand-accent); font-weight: 600;
+    border-left-color: var(--brand-accent);
+    background: rgba(77,199,138,.10);
+  }
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-badge {
+    margin-left: auto; background: var(--brand-accent); color: var(--brand-primary);
+    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: var(--radius-full);
+  }
+  .sidebar-footer {
+    margin-top: auto; padding: 16px 24px 24px;
+    border-top: 1px solid rgba(77,199,138,.12);
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: var(--radius-full);
+    background: var(--brand-accent); color: var(--brand-primary);
+    font-family: var(--font-display); font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .user-name { font-size: 13px; font-weight: 600; color: var(--text-inverse); }
+  .user-role { font-size: 11px; color: rgba(234,242,238,.45); }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--surface-card); border-bottom: 1px solid var(--border);
+    padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text-primary); }
+  .topbar-sub { font-size: 13px; color: var(--text-secondary); margin-top: 1px; }
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-md); border: 1px solid var(--border);
+    background: var(--surface-card); display: flex; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer; position: relative;
+  }
+  .notif-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 7px; height: 7px; border-radius: var(--radius-full);
+    background: var(--brand-accent); border: 1.5px solid var(--surface-card);
+  }
+  .btn-primary {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--brand-primary); color: var(--brand-accent);
+    font-family: var(--font-display); font-weight: 600; font-size: 13px;
+    padding: 9px 18px; border-radius: var(--radius-md); border: none; cursor: pointer;
+    letter-spacing: .01em;
+  }
+
+  /* ── CONTENT ── */
+  .content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── SEAL BANNER ── */
+  .seal-banner {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-deep) 100%);
+    border-radius: var(--radius-lg); padding: 20px 28px;
+    display: flex; align-items: center; gap: 20px;
+    border: 1px solid rgba(77,199,138,.2);
+  }
+  .seal-icon {
+    width: 48px; height: 48px; border-radius: var(--radius-full);
+    background: var(--brand-accent); color: var(--brand-primary);
+    font-size: 22px; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; flex-shrink: 0;
+  }
+  .seal-text h3 { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--brand-accent); margin-bottom: 3px; }
+  .seal-text p { font-size: 13px; color: rgba(234,242,238,.7); line-height: 1.4; }
+  .seal-badge {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    background: rgba(77,199,138,.15); border: 1px solid rgba(77,199,138,.35);
+    color: var(--brand-accent); font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: var(--radius-full);
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat-card {
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-bottom: 8px; letter-spacing: .02em; }
+  .stat-value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+  .stat-value.accent { color: var(--brand-deep); }
+  .stat-unit { font-size: 14px; color: var(--text-muted); margin-left: 3px; }
+  .stat-delta {
+    margin-top: 8px; font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .stat-delta.up { color: var(--state-success); }
+  .stat-delta.neutral { color: var(--text-muted); }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  }
+  .section-header {
+    padding: 18px 24px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .section-action { font-size: 12px; font-weight: 600; color: var(--brand-deep); cursor: pointer; }
+  .section-body { padding: 18px 24px; }
+
+  /* ── ENGAGEMENT ITEM ── */
+  .engagement-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 0; border-bottom: 1px solid var(--surface-muted);
+  }
+  .engagement-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .eng-avatar {
+    width: 36px; height: 36px; border-radius: var(--radius-md);
+    background: var(--brand-accent-lt); color: var(--brand-deep);
+    font-family: var(--font-display); font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .eng-company { font-weight: 600; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px; }
+  .eng-role { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .eng-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; padding: 3px 8px; border-radius: var(--radius-sm);
+    font-weight: 600; letter-spacing: .03em;
+  }
+  .tag-sector { background: var(--brand-accent-lt); color: var(--brand-deep); }
+  .tag-days { background: var(--surface-muted); color: var(--text-secondary); }
+  .tag-status-active { background: #E8F8EE; color: var(--state-success); }
+  .tag-status-pending { background: #FEF3E2; color: var(--state-warning); }
+  .eng-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .eng-value { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .eng-date { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ── OPPORTUNITY ── */
+  .opp-item {
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 14px 16px; margin-bottom: 12px; background: var(--surface-card);
+  }
+  .opp-item:last-child { margin-bottom: 0; }
+  .opp-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+  .opp-sector { font-weight: 700; font-size: 13px; color: var(--text-primary); }
+  .opp-deadline { font-size: 11px; color: var(--state-warning); font-weight: 600; }
+  .opp-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
+  .opp-footer { display: flex; gap: 8px; align-items: center; }
+  .btn-sm-accept {
+    font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: var(--radius-sm);
+    background: var(--brand-primary); color: var(--brand-accent); border: none; cursor: pointer;
+    letter-spacing: .03em;
+  }
+  .btn-sm-decline {
+    font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-sm);
+    background: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border); cursor: pointer;
+  }
+  .opp-scope { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+  /* ── PAYMENT TIMELINE ── */
+  .payment-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-bottom: 1px solid var(--surface-muted);
+  }
+  .payment-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .pay-dot { width: 8px; height: 8px; border-radius: var(--radius-full); flex-shrink: 0; }
+  .pay-dot.done { background: var(--state-success); }
+  .pay-dot.pending { background: var(--state-warning); }
+  .pay-company { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .pay-date { font-size: 11px; color: var(--text-muted); }
+  .pay-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 500; margin-left: auto; }
+  .pay-amount.done { color: var(--state-success); }
+  .pay-amount.pending { color: var(--state-warning); }
+
+  /* ── AVAILABILITY ── */
+  .avail-widget { display: flex; flex-direction: column; gap: 12px; }
+  .avail-label { font-size: 12px; color: var(--text-secondary); }
+  .avail-bar-track {
+    height: 8px; background: var(--brand-accent-lt); border-radius: var(--radius-full);
+  }
+  .avail-bar-fill {
+    height: 100%; border-radius: var(--radius-full);
+    background: var(--brand-accent);
+  }
+  .avail-numbers {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  }
+  .avail-edit {
+    font-size: 12px; font-weight: 600; color: var(--brand-deep); cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">FracExec</div>
+    <div class="logo-sub">Portal do Executivo</div>
+  </div>
+
+  <div class="nav-section-label">Meu espaço</div>
+  <div class="nav-item active"><span class="nav-icon">◈</span> Dashboard</div>
+  <div class="nav-item"><span class="nav-icon">◻</span> Meu perfil</div>
+  <div class="nav-item"><span class="nav-icon">◆</span> Engajamentos</div>
+  <div class="nav-item">
+    <span class="nav-icon">◎</span> Oportunidades
+    <span class="nav-badge">2</span>
+  </div>
+  <div class="nav-item"><span class="nav-icon">◑</span> Pagamentos</div>
+
+  <div class="nav-section-label">Conta</div>
+  <div class="nav-item"><span class="nav-icon">⊙</span> Disponibilidade</div>
+  <div class="nav-item"><span class="nav-icon">◌</span> Configurações</div>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">MA</div>
+      <div>
+        <div class="user-name">Marcus A.</div>
+        <div class="user-role">CFO · Verificado</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div>
+      <div class="topbar-title">Bom dia, Marcus</div>
+      <div class="topbar-sub">Quinta-feira, 29 de maio de 2026</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="btn-icon">🔔<span class="notif-dot"></span></div>
+      <button class="btn-primary">✦ Atualizar disponibilidade</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- SEAL BANNER -->
+    <div class="seal-banner">
+      <div class="seal-icon">✦</div>
+      <div class="seal-text">
+        <h3>Selo FracExec · Verificado</h3>
+        <p>Seu histórico foi verificado e atestado pela equipe FracExec. Você está visível na pool de executivos para novas oportunidades.</p>
+      </div>
+      <div class="seal-badge">✔ Ativo</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Engajamentos ativos</div>
+        <div class="stat-value accent">2</div>
+        <div class="stat-delta neutral">● de 3 possíveis</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dias disponíveis / mês</div>
+        <div class="stat-value">6<span class="stat-unit">dias</span></div>
+        <div class="stat-delta neutral">● de 10 totais</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Próximo repasse</div>
+        <div class="stat-value accent">R$</div>
+        <div style="font-family:var(--font-mono);font-size:22px;color:var(--brand-deep);margin-top:-4px">14.760</div>
+        <div class="stat-delta neutral">● previsto em 3 dias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Oportunidades aguardando</div>
+        <div class="stat-value" style="color:var(--state-warning)">2</div>
+        <div class="stat-delta up" style="color:var(--state-warning)">⏱ Prazo: 2 dias úteis</div>
+      </div>
+    </div>
+
+    <!-- TWO-COL -->
+    <div class="two-col">
+
+      <!-- ENGAGEMENTS -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">Engajamentos ativos</div>
+          <div class="section-action">Ver todos →</div>
+        </div>
+        <div class="section-body">
+
+          <div class="engagement-item">
+            <div class="eng-avatar">LG</div>
+            <div>
+              <div class="eng-company">Empresa · Logística</div>
+              <div class="eng-role">CFO Fracionado · 4 dias/mês</div>
+              <div class="eng-meta">
+                <span class="tag tag-sector">Logística</span>
+                <span class="tag tag-days">4 dias/mês</span>
+                <span class="tag tag-status-active">Ativo</span>
+              </div>
+            </div>
+            <div class="eng-right">
+              <div class="eng-value">R$ 9.840<span style="font-size:11px;color:var(--text-muted)">/mês</span></div>
+              <div class="eng-date">Próxima sessão: 02/jun</div>
+            </div>
+          </div>
+
+          <div class="engagement-item">
+            <div class="eng-avatar">TK</div>
+            <div>
+              <div class="eng-company">Empresa · Tecnologia</div>
+              <div class="eng-role">CFO Fracionado · 2 dias/mês</div>
+              <div class="eng-meta">
+                <span class="tag tag-sector">Tecnologia</span>
+                <span class="tag tag-days">2 dias/mês</span>
+                <span class="tag tag-status-active">Ativo</span>
+              </div>
+            </div>
+            <div class="eng-right">
+              <div class="eng-value">R$ 4.920<span style="font-size:11px;color:var(--text-muted)">/mês</span></div>
+              <div class="eng-date">Próxima sessão: 05/jun</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- OPPORTUNITIES -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-title">Oportunidades</div>
+            <span style="font-size:10px;background:#FEF3E2;color:var(--state-warning);padding:3px 8px;border-radius:var(--radius-full);font-weight:700;">2 aguardando</span>
+          </div>
+          <div class="section-body">
+
+            <div class="opp-item">
+              <div class="opp-header">
+                <div class="opp-sector">PME · Varejo · São Paulo</div>
+                <div class="opp-deadline">⏱ 2 dias úteis</div>
+              </div>
+              <div class="opp-desc">Estruturação financeira pré-rodada Series A. CFO com experiência em crescimento acelerado e captação.</div>
+              <div class="opp-footer">
+                <button class="btn-sm-accept">Tenho interesse</button>
+                <button class="btn-sm-decline">Declinar</button>
+                <span class="opp-scope">3 dias/mês · 4 meses</span>
+              </div>
+            </div>
+
+            <div class="opp-item">
+              <div class="opp-header">
+                <div class="opp-sector">PME · Agro · Ribeirão Preto</div>
+                <div class="opp-deadline">⏱ 2 dias úteis</div>
+              </div>
+              <div class="opp-desc">Redesenho de processos financeiros e implantação de controladoria para empresa familiar em transição.</div>
+              <div class="opp-footer">
+                <button class="btn-sm-accept">Tenho interesse</button>
+                <button class="btn-sm-decline">Declinar</button>
+                <span class="opp-scope">4 dias/mês · 6 meses</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- AVAILABILITY -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-title">Disponibilidade</div>
+            <div class="avail-edit">✏ Editar</div>
+          </div>
+          <div class="section-body">
+            <div class="avail-widget">
+              <div class="avail-label">Dias usados este mês</div>
+              <div class="avail-bar-track">
+                <div class="avail-bar-fill" style="width: 60%"></div>
+              </div>
+              <div class="avail-numbers">
+                <span>6 usados</span>
+                <span>4 livres</span>
+                <span>10 total</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">Histórico de repasses</div>
+        <div class="section-action">Ver extrato completo →</div>
+      </div>
+      <div class="section-body">
+        <div class="payment-item">
+          <div class="pay-dot done"></div>
+          <div>
+            <div class="pay-company">Empresa · Logística</div>
+            <div class="pay-date">Repasse de mai/2026 · processado</div>
+          </div>
+          <div class="pay-amount done">+ R$ 9.840</div>
+        </div>
+        <div class="payment-item">
+          <div class="pay-dot done"></div>
+          <div>
+            <div class="pay-company">Empresa · Tecnologia</div>
+            <div class="pay-date">Repasse de mai/2026 · processado</div>
+          </div>
+          <div class="pay-amount done">+ R$ 4.920</div>
+        </div>
+        <div class="payment-item">
+          <div class="pay-dot pending"></div>
+          <div>
+            <div class="pay-company">Empresa · Logística</div>
+            <div class="pay-date">Repasse de jun/2026 · previsto em 3 dias úteis</div>
+          </div>
+          <div class="pay-amount pending">R$ 9.840</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+</body>
+</html>

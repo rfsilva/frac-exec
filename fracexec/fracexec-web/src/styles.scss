@@ -1,0 +1,84 @@
+@use 'styles/theme' as *;
+
+// ─── Design Tokens — CSS Custom Properties ───────────────────────────────────
+// All tokens from DESIGN.md exposed as CSS variables for use in all components.
+:root {
+  // Brand
+  --color-brand-primary:      #132A1E;
+  --color-brand-deep:         #1F4A32;
+  --color-brand-accent:       #4DC78A;
+  --color-brand-accent-light: #DCEEE4;
+
+  // Surface
+  --color-surface-bg:     #F2F7F4;
+  --color-surface-card:   #FFFFFF;
+  --color-surface-muted:  #EDF4F0;
+  --color-surface-subtle: #F7FAF8;
+
+  // Text
+  --color-text-primary:   #0D1F15;
+  --color-text-secondary: #4A6358;
+  --color-text-muted:     #8BA898;
+  --color-text-inverse:   #EAF2EE;
+  --color-text-on-accent: #132A1E;
+
+  // Border
+  --color-border-default: #C8E0D2;
+  --color-border-strong:  #9FC4B0;
+
+  // States
+  --color-state-success:    #27AE60;
+  --color-state-success-bg: #E8F8EE;
+  --color-state-warning:    #E67E22;
+  --color-state-warning-bg: #FEF3E2;
+  --color-state-error:      #E74C3C;
+  --color-state-error-bg:   #FDECEA;
+  --color-state-info:       #2980B9;
+  --color-state-info-bg:    #E8F4FD;
+
+  // Typography families
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  // Border radius
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  28px;
+  --radius-full: 9999px;
+
+  // Spacing (4px base scale) — prefixed --spacing-* per AC-8
+  --spacing-1:  4px;
+  --spacing-2:  8px;
+  --spacing-3:  12px;
+  --spacing-4:  16px;
+  --spacing-5:  20px;
+  --spacing-6:  24px;
+  --spacing-8:  32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+}
+
+// ─── Global Reset ─────────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-surface-bg);
+  color: var(--color-text-primary);
+}
+
+// UX-DR14: visible focus outline for all interactive elements
+:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}

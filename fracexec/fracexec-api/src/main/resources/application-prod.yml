@@ -1,0 +1,59 @@
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME:fracexec}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  mail:
+    host: email-smtp.us-east-1.amazonaws.com
+    port: 587
+    username: ${SES_SMTP_USERNAME}
+    password: ${SES_SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+fracexec:
+  cors:
+    allowed-origins: ${FRONTEND_URL}
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-expiration-ms: 900000
+    refresh-token-expiration-days: 7
+  app:
+    base-url: ${FRONTEND_URL}
+  minio:
+    # Vazio = usar IAM Role (DefaultCredentialsProvider) em produção AWS
+    endpoint: ""
+    access-key: ""
+    secret-key: ""
+    buckets:
+      docs: fracexec-docs-prod
+      profiles: fracexec-profiles-prod
+      contracts: fracexec-contracts-prod
+  stripe:
+    api-key: ${STRIPE_API_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  scheduling:
+    pool-size: 2
+
+logging:
+  level:
+    root: WARN
+    com.fracexec: INFO
+  file:
+    name: /var/log/fracexec/app.log

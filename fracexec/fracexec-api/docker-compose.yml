@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fracexec-api
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-local}
+      DB_URL: jdbc:postgresql://postgres:5432/fracexec
+      MAIL_HOST: fracexec-mailpit
+      MAIL_PORT: "1025"
+      MINIO_ENDPOINT: http://fracexec-minio:9000
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../fracexec-web
+      dockerfile: Dockerfile
+    container_name: fracexec-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fracexec-postgres
+    environment:
+      POSTGRES_DB: fracexec
+      POSTGRES_USER: ${DB_USER:-fracexec}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fracexec_dev_2026}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-fracexec} -d fracexec"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:RELEASE.2024-11-07T00-52-20Z
+    container_name: fracexec-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-fracexec_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-fracexec_minio_secret_2026}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: fracexec-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres_data:
+  minio_data:

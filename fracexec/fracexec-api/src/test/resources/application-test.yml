@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:fracexec_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+  mail:
+    host: localhost
+    port: 1025
+    username: ''
+    password: ''
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+fracexec:
+  cors:
+    allowed-origins: http://localhost:4200
+  jwt:
+    secret: test-secret-key-with-at-least-32-characters-for-hs256
+    access-token-expiration-ms: 900000
+    refresh-token-expiration-days: 7
+  minio:
+    endpoint: http://localhost:9000
+    access-key: test
+    secret-key: test
+    buckets:
+      docs: fracexec-docs-test
+      profiles: fracexec-profiles-test
+      contracts: fracexec-contracts-test
+  stripe:
+    api-key: ''
+    webhook-secret: ''
+  scheduling:
+    pool-size: 1

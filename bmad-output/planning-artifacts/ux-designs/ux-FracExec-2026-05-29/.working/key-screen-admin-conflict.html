@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Admin · Revisão de Conflito de Interesse</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-primary:#132A1E;--brand-deep:#1F4A32;--brand-accent:#4DC78A;--brand-accent-lt:#DCEEE4;
+    --surface-bg:#F2F7F4;--surface-card:#FFFFFF;--surface-muted:#EDF4F0;
+    --text-primary:#0D1F15;--text-secondary:#4A6358;--text-muted:#8BA898;--text-inverse:#EAF2EE;
+    --border:#C8E0D2;--state-success:#27AE60;--state-warning:#E67E22;--state-error:#E74C3C;
+    --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-full:9999px;
+    --shadow-sm:0 1px 4px rgba(19,42,30,.06);--shadow-md:0 4px 16px rgba(19,42,30,.09);
+    --font-d:'Plus Jakarta Sans',system-ui,sans-serif;--font-b:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-b);background:var(--surface-bg);color:var(--text-primary);display:flex;min-height:100vh;}
+
+  .sidebar{width:240px;min-height:100vh;background:var(--brand-primary);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
+  .sb-logo{padding:28px 24px 22px;border-bottom:1px solid rgba(77,199,138,.15);}
+  .sb-brand{font-family:var(--font-d);font-weight:800;font-size:20px;color:var(--brand-accent);letter-spacing:-.02em;}
+  .sb-sub{font-size:10px;color:rgba(234,242,238,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+  .sb-section{font-size:10px;color:rgba(234,242,238,.35);letter-spacing:.12em;text-transform:uppercase;padding:20px 24px 8px;}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:13.5px;font-weight:500;color:rgba(234,242,238,.65);border-left:3px solid transparent;cursor:pointer;}
+  .sb-item.active{color:var(--brand-accent);font-weight:600;border-left-color:var(--brand-accent);background:rgba(77,199,138,.10);}
+  .sb-item.warn{color:rgba(230,126,34,.9);}
+  .sb-icon{font-size:14px;width:18px;text-align:center;}
+  .sb-badge{margin-left:auto;background:var(--brand-accent);color:var(--brand-primary);font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-full);}
+  .sb-badge.warn{background:var(--state-warning);color:#fff;}
+  .sb-footer{margin-top:auto;padding:16px 24px 24px;border-top:1px solid rgba(77,199,138,.12);}
+  .u-chip{display:flex;align-items:center;gap:10px;}
+  .u-av{width:32px;height:32px;border-radius:var(--radius-full);background:var(--brand-accent);color:var(--brand-primary);font-family:var(--font-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .u-name{font-size:13px;font-weight:600;color:var(--text-inverse);}
+  .u-role{font-size:11px;color:rgba(234,242,238,.45);}
+
+  .main{flex:1;display:flex;flex-direction:column;}
+  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;}
+  .tb-back{font-size:12px;color:var(--text-secondary);cursor:pointer;font-weight:500;}
+  .tb-title{font-family:var(--font-d);font-size:17px;font-weight:700;}
+  .tb-sub{font-size:12px;color:var(--text-secondary);}
+
+  .content{padding:28px 40px;max-width:900px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:20px;}
+
+  /* ALERT BANNER */
+  .alert-banner{background:#FEF3E2;border:1.5px solid rgba(230,126,34,.4);border-radius:var(--radius-lg);padding:20px 24px;display:flex;gap:16px;align-items:flex-start;}
+  .alert-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+  .alert-title{font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--state-warning);margin-bottom:4px;}
+  .alert-sub{font-size:13px;color:#7A4B0A;line-height:1.6;}
+
+  /* SPLIT */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .info-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);}
+  .ic-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+  .ic-icon{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .ic-icon.exec{background:var(--brand-accent-lt);color:var(--brand-deep);}
+  .ic-icon.company{background:#E8F4FD;color:#1A5276;}
+  .ic-title{font-family:var(--font-d);font-size:13px;font-weight:700;}
+  .ic-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+  .ic-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+  .ic-field{display:flex;flex-direction:column;gap:2px;}
+  .ic-field label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+  .ic-field span{font-size:13px;color:var(--text-primary);}
+
+  /* OVERLAP VIZ */
+  .overlap-card{background:var(--surface-card);border:1.5px solid rgba(230,126,34,.3);border-radius:var(--radius-lg);padding:20px 24px;}
+  .ov-title{font-family:var(--font-d);font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .ov-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;}
+  .ov-col{background:var(--surface-muted);border-radius:var(--radius-md);padding:14px 16px;}
+  .ov-col-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .ov-col-val{font-size:13px;color:var(--text-primary);font-weight:600;}
+  .ov-vs{font-size:20px;color:var(--state-warning);font-weight:800;text-align:center;}
+  .overlap-tag{display:inline-flex;align-items:center;gap:5px;background:#FEF3E2;border:1px solid rgba(230,126,34,.3);color:var(--state-warning);font-size:11px;font-weight:700;padding:4px 12px;border-radius:var(--radius-full);margin-top:12px;}
+
+  /* DECISION */
+  .decision-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);}
+  .dc-title{font-family:var(--font-d);font-size:15px;font-weight:700;margin-bottom:6px;}
+  .dc-sub{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5;}
+  .dc-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+  .dc-option{display:flex;gap:12px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;transition:border .15s;}
+  .dc-option.selected{border-color:var(--brand-accent);background:rgba(77,199,138,.03);}
+  .dc-option.danger-opt{border-color:rgba(231,76,60,.3);}
+  .dc-option.danger-opt.selected{border-color:var(--state-error);background:#FDECEA;}
+  .dc-radio{width:18px;height:18px;border-radius:var(--radius-full);border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;}
+  .dc-radio.selected{border-color:var(--brand-accent);background:var(--brand-accent);}
+  .dc-radio.selected-danger{border-color:var(--state-error);background:var(--state-error);}
+  .dc-radio::after{content:'';width:7px;height:7px;border-radius:var(--radius-full);background:#fff;}
+  .dc-opt-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:3px;}
+  .dc-opt-desc{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+  .dc-note{display:flex;flex-direction:column;gap:6px;}
+  .dc-note label{font-size:12px;font-weight:600;color:var(--text-secondary);}
+  .dc-note textarea{border:1.5px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;font-family:var(--font-b);font-size:13px;color:var(--text-primary);resize:vertical;min-height:72px;outline:none;}
+  .dc-note textarea:focus{border-color:var(--brand-accent);}
+  .dc-actions{display:flex;gap:10px;margin-top:20px;}
+  .btn-confirm{font-family:var(--font-d);font-weight:700;font-size:13px;background:var(--brand-primary);color:var(--brand-accent);padding:11px 24px;border-radius:var(--radius-md);border:none;cursor:pointer;}
+  .btn-cancel{font-size:13px;font-weight:600;color:var(--text-secondary);background:transparent;border:1.5px solid var(--border);padding:11px 20px;border-radius:var(--radius-md);cursor:pointer;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo"><div class="sb-brand">FracExec</div><div class="sb-sub">Painel Operacional</div></div>
+  <div class="sb-section">Operações</div>
+  <div class="sb-item"><span class="sb-icon">◈</span> Dashboard</div>
+  <div class="sb-item"><span class="sb-icon">◻</span> Candidaturas <span class="sb-badge">7</span></div>
+  <div class="sb-item"><span class="sb-icon">◆</span> Pool de executivos</div>
+  <div class="sb-item"><span class="sb-icon">◎</span> Necessidades <span class="sb-badge">3</span></div>
+  <div class="sb-item active warn"><span class="sb-icon">⚠</span> Conflitos <span class="sb-badge warn">2</span></div>
+  <div class="sb-item"><span class="sb-icon">◑</span> Engajamentos</div>
+  <div class="sb-item"><span class="sb-icon">▣</span> Contratos</div>
+  <div class="sb-footer">
+    <div class="u-chip"><div class="u-av">AN</div><div><div class="u-name">Ana Neri</div><div class="u-role">Admin · FracExec</div></div></div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <span class="tb-back">← Conflitos</span>
+    <div>
+      <div class="tb-title">Revisão de Conflito de Interesse</div>
+      <div class="tb-sub">Necessidade: LogiRota Ltda. · Executivo: Sandra Rocha</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ALERT -->
+    <div class="alert-banner">
+      <div class="alert-icon">⚠</div>
+      <div>
+        <div class="alert-title">Sobreposição detectada automaticamente</div>
+        <div class="alert-sub">O sistema identificou que Sandra Rocha possui cliente ativo no <strong>mesmo setor (CNAE 49 — Transporte Terrestre)</strong> e na <strong>mesma região (SP)</strong> que a necessidade de LogiRota Ltda. Esta revisão é obrigatória antes de incluir o executivo em qualquer shortlist.</div>
+      </div>
+    </div>
+
+    <!-- SPLIT INFO -->
+    <div class="split">
+      <div class="info-card">
+        <div class="ic-header">
+          <div class="ic-icon exec">★</div>
+          <div><div class="ic-title">Sandra Rocha</div><div class="ic-label">Executivo — CFO</div></div>
+        </div>
+        <div class="ic-body">
+          <div class="ic-field"><label>Especialidade</label><span>CFO · 14 anos verificado</span></div>
+          <div class="ic-field"><label>Clientes ativos declarados</label><span>2 engajamentos ativos</span></div>
+          <div class="ic-field"><label>Cliente em sobreposição</label><span>Empresa · Setor: Transporte Terrestre (CNAE 49) · Região: SP · Capital</span></div>
+          <div class="ic-field"><label>Disponibilidade atual</label><span>6 dias/mês livres</span></div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-header">
+          <div class="ic-icon company">◻</div>
+          <div><div class="ic-title">LogiRota Ltda.</div><div class="ic-label">PME — Necessidade ativa</div></div>
+        </div>
+        <div class="ic-body">
+          <div class="ic-field"><label>Setor</label><span>Transporte de Cargas (CNAE 49)</span></div>
+          <div class="ic-field"><label>Porte</label><span>60 funcionários · R$15M–50M/ano</span></div>
+          <div class="ic-field"><label>Região</label><span>São Paulo · SP</span></div>
+          <div class="ic-field"><label>Necessidade</label><span>CFO Fracionado · 4 dias/mês · 6 meses</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERLAP VIZ -->
+    <div class="overlap-card">
+      <div class="ov-title">⚠ Critério de conflito atingido</div>
+      <div class="ov-grid">
+        <div class="ov-col">
+          <div class="ov-col-label">Cliente ativo do executivo</div>
+          <div class="ov-col-val">CNAE 49 — Transporte Terrestre</div>
+          <div class="ov-col-val" style="margin-top:4px;font-weight:400;color:var(--text-secondary);">Região: SP Capital</div>
+        </div>
+        <div class="ov-vs">≈</div>
+        <div class="ov-col">
+          <div class="ov-col-label">Empresa solicitante</div>
+          <div class="ov-col-val">CNAE 49 — Transporte de Cargas</div>
+          <div class="ov-col-val" style="margin-top:4px;font-weight:400;color:var(--text-secondary);">Região: SP Capital</div>
+        </div>
+      </div>
+      <div><span class="overlap-tag">⚠ Mesmo CNAE 2 dígitos · Mesma região</span></div>
+    </div>
+
+    <!-- DECISION -->
+    <div class="decision-card">
+      <div class="dc-title">Decisão da equipe FracExec</div>
+      <div class="dc-sub">Como avaliação contextual, o sistema detectou sobreposição formal. Você precisa decidir se o conflito é efetivo considerando o contexto dos dois negócios.</div>
+
+      <div class="dc-options">
+        <div class="dc-option selected">
+          <div class="dc-radio selected"><span></span></div>
+          <div>
+            <div class="dc-opt-title">Apresentar com alerta para a PME</div>
+            <div class="dc-opt-desc">Sandra pode ser incluída na shortlist. A PME receberá um aviso genérico: "Este executivo atua em empresa do mesmo segmento na sua região." A PME decide se aceita o risco. Nenhum nome será revelado.</div>
+          </div>
+        </div>
+        <div class="dc-option">
+          <div class="dc-radio"></div>
+          <div>
+            <div class="dc-opt-title">Excluir da shortlist silenciosamente</div>
+            <div class="dc-opt-desc">Sandra não será incluída nesta shortlist. A PME não é notificada sobre a exclusão. Use quando o conflito for real e prejudicial ao engajamento.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dc-note">
+        <label>Nota interna da equipe (obrigatória)</label>
+        <textarea>Avaliado: cliente atual de Sandra atua em transporte rodoviário de cargas secas no interior do Estado. LogiRota opera logística urbana last-mile em SP Capital. Mercados distintos dentro do mesmo CNAE — conflito não efetivo. Apresentar com alerta para decisão da PME.</textarea>
+      </div>
+
+      <div class="dc-actions">
+        <button class="btn-confirm">✓ Confirmar decisão e retornar à shortlist</button>
+        <button class="btn-cancel">Cancelar</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

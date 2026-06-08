@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fracexec-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/fracexec}
+    username: ${DB_USER:fracexec}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        default_schema: public
+        format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+  server:
+    port: 8081
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+  default-produces-media-type: application/json
+
+fracexec:
+  cors:
+    allowed-origins: ${FRONTEND_URL:http://localhost:4200}
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-expiration-ms: 900000
+    refresh-token-expiration-days: 7
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+    buckets:
+      docs: fracexec-docs
+      profiles: fracexec-profiles
+      contracts: fracexec-contracts
+  stripe:
+    api-key: ${STRIPE_API_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  scheduling:
+    pool-size: 3
+  app:
+    base-url: ${FRONTEND_URL:http://localhost:4200}
+    privacy-policy-url: ${PRIVACY_POLICY_URL:http://localhost:4200/privacy}
+
+logging:
+  level:
+    com.fracexec: INFO
+    org.springframework.security: WARN

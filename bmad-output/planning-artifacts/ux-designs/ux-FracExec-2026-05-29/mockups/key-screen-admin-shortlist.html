@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Admin · Construtor de Shortlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-primary:#132A1E;--brand-deep:#1F4A32;--brand-accent:#4DC78A;--brand-accent-lt:#DCEEE4;
+    --surface-bg:#F2F7F4;--surface-card:#FFFFFF;--surface-muted:#EDF4F0;
+    --text-primary:#0D1F15;--text-secondary:#4A6358;--text-muted:#8BA898;--text-inverse:#EAF2EE;
+    --border:#C8E0D2;--state-success:#27AE60;--state-warning:#E67E22;--state-error:#E74C3C;
+    --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-full:9999px;
+    --shadow-sm:0 1px 4px rgba(19,42,30,.06);--shadow-md:0 4px 16px rgba(19,42,30,.09);
+    --font-d:'Plus Jakarta Sans',system-ui,sans-serif;--font-b:'Inter',system-ui,sans-serif;--font-m:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-b);background:var(--surface-bg);color:var(--text-primary);display:flex;min-height:100vh;}
+
+  .sidebar{width:240px;min-height:100vh;background:var(--brand-primary);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
+  .sb-logo{padding:28px 24px 22px;border-bottom:1px solid rgba(77,199,138,.15);}
+  .sb-brand{font-family:var(--font-d);font-weight:800;font-size:20px;color:var(--brand-accent);letter-spacing:-.02em;}
+  .sb-sub{font-size:10px;color:rgba(234,242,238,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+  .sb-section{font-size:10px;color:rgba(234,242,238,.35);letter-spacing:.12em;text-transform:uppercase;padding:20px 24px 8px;}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:13.5px;font-weight:500;color:rgba(234,242,238,.65);border-left:3px solid transparent;cursor:pointer;}
+  .sb-item.active{color:var(--brand-accent);font-weight:600;border-left-color:var(--brand-accent);background:rgba(77,199,138,.10);}
+  .sb-icon{font-size:14px;width:18px;text-align:center;}
+  .sb-badge{margin-left:auto;background:var(--brand-accent);color:var(--brand-primary);font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-full);}
+  .sb-footer{margin-top:auto;padding:16px 24px 24px;border-top:1px solid rgba(77,199,138,.12);}
+  .u-chip{display:flex;align-items:center;gap:10px;}
+  .u-av{width:32px;height:32px;border-radius:var(--radius-full);background:var(--brand-accent);color:var(--brand-primary);font-family:var(--font-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .u-name{font-size:13px;font-weight:600;color:var(--text-inverse);}
+  .u-role{font-size:11px;color:rgba(234,242,238,.45);}
+
+  .main{flex:1;display:flex;flex-direction:column;overflow:auto;}
+  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:10;}
+  .tb-back{font-size:12px;color:var(--text-secondary);cursor:pointer;font-weight:500;}
+  .tb-title{font-family:var(--font-d);font-size:17px;font-weight:700;}
+  .tb-sub{font-size:12px;color:var(--text-secondary);}
+  .ml-auto{margin-left:auto;}
+  .btn-send{font-family:var(--font-d);font-size:13px;font-weight:700;background:var(--brand-primary);color:var(--brand-accent);padding:10px 22px;border-radius:var(--radius-md);border:none;cursor:pointer;display:flex;align-items:center;gap:7px;}
+  .btn-send:disabled{opacity:.4;cursor:not-allowed;}
+
+  .workspace{flex:1;display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden;}
+
+  /* LEFT — NEED CONTEXT + POOL */
+  .left-panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:auto;}
+
+  /* NEED CONTEXT */
+  .need-ctx{background:linear-gradient(135deg,var(--brand-primary),var(--brand-deep));padding:18px 24px;border-bottom:1px solid rgba(77,199,138,.15);}
+  .nc-label{font-size:10px;color:rgba(234,242,238,.45);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+  .nc-title{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text-inverse);margin-bottom:6px;}
+  .nc-meta{display:flex;gap:12px;flex-wrap:wrap;}
+  .nc-pill{font-size:11px;color:rgba(234,242,238,.65);background:rgba(234,242,238,.08);border:1px solid rgba(234,242,238,.12);padding:3px 10px;border-radius:var(--radius-full);}
+  .nc-confidential{margin-top:10px;background:rgba(77,199,138,.1);border:1px solid rgba(77,199,138,.2);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;color:rgba(234,242,238,.7);line-height:1.5;}
+
+  /* FILTERS POOL */
+  .pool-filters{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface-card);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .pf-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+  .pf-pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--surface-card);color:var(--text-secondary);cursor:pointer;}
+  .pf-pill.on{background:var(--brand-primary);color:var(--brand-accent);border-color:var(--brand-primary);}
+  .pool-count{margin-left:auto;font-size:12px;color:var(--text-muted);}
+
+  /* EXEC CARDS IN POOL */
+  .pool-list{padding:16px 20px;display:flex;flex-direction:column;gap:10px;overflow:auto;}
+  .pool-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;transition:border .15s,box-shadow .15s;}
+  .pool-card:hover{border-color:var(--brand-accent);box-shadow:var(--shadow-md);}
+  .pool-card.conflict{border-color:rgba(230,126,34,.5);background:#FFFBF5;}
+  .pc-av{width:38px;height:38px;border-radius:var(--radius-sm);background:var(--brand-accent-lt);color:var(--brand-deep);font-family:var(--font-d);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pc-name{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px;}
+  .pc-role{font-size:12px;color:var(--text-secondary);margin-bottom:6px;}
+  .pc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+  .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-sm);text-transform:uppercase;letter-spacing:.03em;}
+  .tag-sector{background:var(--brand-accent-lt);color:var(--brand-deep);}
+  .tag-avail{background:var(--surface-muted);color:var(--text-secondary);}
+  .conflict-warn{display:flex;align-items:center;gap:6px;background:#FEF3E2;border:1px solid rgba(230,126,34,.3);border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;font-weight:600;color:var(--state-warning);margin-bottom:8px;}
+  .pc-add-btn{margin-left:auto;font-size:11px;font-weight:700;background:var(--brand-primary);color:var(--brand-accent);border:none;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .pc-add-btn.added{background:var(--brand-accent-lt);color:var(--brand-deep);cursor:default;}
+
+  /* RIGHT — SHORTLIST */
+  .right-panel{display:flex;flex-direction:column;background:var(--surface-card);}
+  .rp-header{padding:16px 20px;border-bottom:1px solid var(--border);}
+  .rp-title{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--text-primary);}
+  .rp-sub{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+  .rp-body{padding:16px 20px;flex:1;display:flex;flex-direction:column;gap:10px;}
+
+  /* SHORTLIST SLOT */
+  .sl-slot{border:2px dashed var(--border);border-radius:var(--radius-md);padding:14px;display:flex;align-items:center;gap:12px;min-height:72px;}
+  .sl-slot.filled{border:1.5px solid var(--border);background:var(--surface-card);border-style:solid;}
+  .sl-slot.conflict-slot{border-color:rgba(230,126,34,.5);background:#FFFBF5;}
+  .sl-num{width:24px;height:24px;border-radius:var(--radius-full);background:var(--surface-muted);color:var(--text-muted);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sl-num.filled{background:var(--brand-primary);color:var(--brand-accent);}
+  .sl-empty{font-size:12px;color:var(--text-muted);font-style:italic;}
+  .sl-name{font-size:13px;font-weight:700;color:var(--text-primary);}
+  .sl-role{font-size:11px;color:var(--text-secondary);}
+  .sl-remove{margin-left:auto;font-size:11px;color:var(--text-muted);cursor:pointer;font-weight:600;}
+  .sl-conflict-tag{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--state-warning);background:#FEF3E2;padding:2px 7px;border-radius:var(--radius-full);margin-top:3px;}
+
+  .rp-footer{padding:16px 20px;border-top:1px solid var(--border);}
+  .rp-counter{font-size:12px;color:var(--text-secondary);margin-bottom:10px;}
+  .rp-counter strong{color:var(--text-primary);}
+  .btn-send-full{font-family:var(--font-d);font-size:13px;font-weight:700;background:var(--brand-primary);color:var(--brand-accent);padding:12px;border-radius:var(--radius-md);border:none;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo"><div class="sb-brand">FracExec</div><div class="sb-sub">Painel Operacional</div></div>
+  <div class="sb-section">Operações</div>
+  <div class="sb-item"><span class="sb-icon">◈</span> Dashboard</div>
+  <div class="sb-item"><span class="sb-icon">◻</span> Candidaturas <span class="sb-badge">7</span></div>
+  <div class="sb-item"><span class="sb-icon">◆</span> Pool de executivos</div>
+  <div class="sb-item active"><span class="sb-icon">◎</span> Necessidades <span class="sb-badge">3</span></div>
+  <div class="sb-item"><span class="sb-icon">⚠</span> Conflitos <span class="sb-badge">2</span></div>
+  <div class="sb-item"><span class="sb-icon">◑</span> Engajamentos</div>
+  <div class="sb-item"><span class="sb-icon">▣</span> Contratos</div>
+  <div class="sb-footer">
+    <div class="u-chip"><div class="u-av">AN</div><div><div class="u-name">Ana Neri</div><div class="u-role">Admin · FracExec</div></div></div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <span class="tb-back">← Necessidades</span>
+    <div>
+      <div class="tb-title">Construir shortlist — LogiRota Ltda.</div>
+      <div class="tb-sub">CFO Fracionado · 4 dias/mês · 6 meses · São Paulo</div>
+    </div>
+    <div class="ml-auto" style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:12px;color:var(--text-muted);">2 de 4 posições preenchidas</span>
+      <button class="btn-send">✦ Enviar shortlist</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+      <!-- NEED CONTEXT -->
+      <div class="need-ctx">
+        <div class="nc-label">Necessidade da empresa</div>
+        <div class="nc-title">CFO Fracionado para estruturação financeira pré-captação</div>
+        <div class="nc-meta">
+          <span class="nc-pill">Setor: Logística</span>
+          <span class="nc-pill">Porte: 60 funcionários</span>
+          <span class="nc-pill">Fat.: R$15M–50M</span>
+          <span class="nc-pill">4 dias/mês · 6 meses</span>
+          <span class="nc-pill">São Paulo</span>
+        </div>
+        <div class="nc-confidential">📋 Contexto confidencial: Empresa prepara rodada Series A para Q4/2026. CEO busca CFO com experiência em captação e estruturação de covenants. Processo sensível — confidencialidade crítica.</div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="pool-filters">
+        <span class="pf-label">Filtros:</span>
+        <span class="pf-pill on">CFO</span>
+        <span class="pf-pill on">Disponível</span>
+        <span class="pf-pill">São Paulo</span>
+        <span class="pf-pill">Logística</span>
+        <span class="pf-pill">Varejo</span>
+        <span class="pool-count">8 executivos encontrados</span>
+      </div>
+
+      <!-- POOL -->
+      <div class="pool-list">
+
+        <!-- CARD 1 — ALREADY ADDED -->
+        <div class="pool-card">
+          <div class="pc-av">MA</div>
+          <div style="flex:1;">
+            <div class="pc-name">Marcus Almeida</div>
+            <div class="pc-role">CFO · 18 anos verificado</div>
+            <div class="pc-tags">
+              <span class="tag tag-sector">Varejo</span>
+              <span class="tag tag-sector">Logística</span>
+              <span class="tag tag-avail">4 dias livres</span>
+            </div>
+          </div>
+          <button class="pc-add-btn added">✓ Adicionado</button>
+        </div>
+
+        <!-- CARD 2 — CONFLICT -->
+        <div class="pool-card conflict">
+          <div class="pc-av">SR</div>
+          <div style="flex:1;">
+            <div class="pc-name">Sandra Rocha</div>
+            <div class="pc-role">CFO · 14 anos verificado</div>
+            <div class="conflict-warn">⚠ Conflito detectado — Logística · São Paulo</div>
+            <div class="pc-tags">
+              <span class="tag tag-sector">Logística</span>
+              <span class="tag tag-sector">Transporte</span>
+              <span class="tag tag-avail">6 dias livres</span>
+            </div>
+          </div>
+          <button class="pc-add-btn">+ Adicionar com alerta</button>
+        </div>
+
+        <!-- CARD 3 — ALREADY ADDED -->
+        <div class="pool-card">
+          <div class="pc-av">TM</div>
+          <div style="flex:1;">
+            <div class="pc-name">Thiago Martins</div>
+            <div class="pc-role">CFO · 11 anos verificado</div>
+            <div class="pc-tags">
+              <span class="tag tag-sector">Tecnologia</span>
+              <span class="tag tag-sector">Scale-up</span>
+              <span class="tag tag-avail">3 dias livres</span>
+            </div>
+          </div>
+          <button class="pc-add-btn added">✓ Adicionado</button>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="pool-card">
+          <div class="pc-av">LC</div>
+          <div style="flex:1;">
+            <div class="pc-name">Lúcia Castro</div>
+            <div class="pc-role">CFO · 9 anos verificado</div>
+            <div class="pc-tags">
+              <span class="tag tag-sector">Saúde</span>
+              <span class="tag tag-sector">Educação</span>
+              <span class="tag tag-avail">8 dias livres</span>
+            </div>
+          </div>
+          <button class="pc-add-btn">+ Adicionar</button>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="pool-card">
+          <div class="pc-av">RB</div>
+          <div style="flex:1;">
+            <div class="pc-name">Ricardo Bueno</div>
+            <div class="pc-role">CFO · 12 anos verificado</div>
+            <div class="pc-tags">
+              <span class="tag tag-sector">Indústria</span>
+              <span class="tag tag-sector">Agro</span>
+              <span class="tag tag-avail">5 dias livres</span>
+            </div>
+          </div>
+          <button class="pc-add-btn">+ Adicionar</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL — SHORTLIST -->
+    <div class="right-panel">
+      <div class="rp-header">
+        <div class="rp-title">Shortlist em construção</div>
+        <div class="rp-sub">Mínimo 2 · Máximo 4 executivos</div>
+      </div>
+      <div class="rp-body">
+
+        <!-- SLOT 1 — FILLED -->
+        <div class="sl-slot filled">
+          <div class="sl-num filled">1</div>
+          <div class="pc-av" style="width:36px;height:36px;font-size:13px;">MA</div>
+          <div>
+            <div class="sl-name">Marcus Almeida</div>
+            <div class="sl-role">CFO · Varejo, Logística</div>
+          </div>
+          <span class="sl-remove">✕</span>
+        </div>
+
+        <!-- SLOT 2 — FILLED WITH CONFLICT -->
+        <div class="sl-slot filled conflict-slot">
+          <div class="sl-num filled" style="background:rgba(230,126,34,.8);">2</div>
+          <div class="pc-av" style="width:36px;height:36px;font-size:13px;background:#FEF3E2;color:var(--state-warning);">SR</div>
+          <div>
+            <div class="sl-name">Sandra Rocha</div>
+            <div class="sl-role">CFO · Logística, Transporte</div>
+            <div class="sl-conflict-tag">⚠ Alerta de conflito será exibido à PME</div>
+          </div>
+          <span class="sl-remove">✕</span>
+        </div>
+
+        <!-- SLOT 3 — FILLED -->
+        <div class="sl-slot filled">
+          <div class="sl-num filled">3</div>
+          <div class="pc-av" style="width:36px;height:36px;font-size:13px;">TM</div>
+          <div>
+            <div class="sl-name">Thiago Martins</div>
+            <div class="sl-role">CFO · Tecnologia, Scale-up</div>
+          </div>
+          <span class="sl-remove">✕</span>
+        </div>
+
+        <!-- SLOT 4 — EMPTY -->
+        <div class="sl-slot">
+          <div class="sl-num">4</div>
+          <div class="sl-empty">Posição disponível — adicione da pool</div>
+        </div>
+
+      </div>
+      <div class="rp-footer">
+        <div class="rp-counter"><strong>3 executivos</strong> na shortlist · 1 com alerta de conflito</div>
+        <button class="btn-send-full">✦ Enviar shortlist para LogiRota Ltda.</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FracExec — Admin · Fila de Candidaturas</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-primary:#132A1E;--brand-deep:#1F4A32;--brand-accent:#4DC78A;--brand-accent-lt:#DCEEE4;
+    --surface-bg:#F2F7F4;--surface-card:#FFFFFF;--surface-muted:#EDF4F0;
+    --text-primary:#0D1F15;--text-secondary:#4A6358;--text-muted:#8BA898;--text-inverse:#EAF2EE;
+    --border:#C8E0D2;--state-success:#27AE60;--state-warning:#E67E22;--state-error:#E74C3C;--state-info:#2980B9;
+    --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-full:9999px;
+    --shadow-sm:0 1px 4px rgba(19,42,30,.06);
+    --font-d:'Plus Jakarta Sans',system-ui,sans-serif;--font-b:'Inter',system-ui,sans-serif;--font-m:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--font-b);background:var(--surface-bg);color:var(--text-primary);display:flex;min-height:100vh;}
+
+  .sidebar{width:240px;min-height:100vh;background:var(--brand-primary);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;}
+  .sb-logo{padding:28px 24px 22px;border-bottom:1px solid rgba(77,199,138,.15);}
+  .sb-brand{font-family:var(--font-d);font-weight:800;font-size:20px;color:var(--brand-accent);letter-spacing:-.02em;}
+  .sb-sub{font-size:10px;color:rgba(234,242,238,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+  .sb-section{font-size:10px;color:rgba(234,242,238,.35);letter-spacing:.12em;text-transform:uppercase;padding:20px 24px 8px;}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:13.5px;font-weight:500;color:rgba(234,242,238,.65);border-left:3px solid transparent;cursor:pointer;}
+  .sb-item.active{color:var(--brand-accent);font-weight:600;border-left-color:var(--brand-accent);background:rgba(77,199,138,.10);}
+  .sb-icon{font-size:14px;width:18px;text-align:center;}
+  .sb-badge{margin-left:auto;background:var(--brand-accent);color:var(--brand-primary);font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-full);}
+  .sb-footer{margin-top:auto;padding:16px 24px 24px;border-top:1px solid rgba(77,199,138,.12);}
+  .u-chip{display:flex;align-items:center;gap:10px;}
+  .u-av{width:32px;height:32px;border-radius:var(--radius-full);background:var(--brand-accent);color:var(--brand-primary);font-family:var(--font-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .u-name{font-size:13px;font-weight:600;color:var(--text-inverse);}
+  .u-role{font-size:11px;color:rgba(234,242,238,.45);}
+
+  .main{flex:1;display:flex;flex-direction:column;overflow:auto;}
+  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+  .tb-title{font-family:var(--font-d);font-size:18px;font-weight:700;}
+  .tb-sub{font-size:13px;color:var(--text-secondary);margin-top:1px;}
+
+  .content{padding:28px 32px;display:flex;flex-direction:column;gap:20px;}
+
+  /* FILTERS */
+  .filter-bar{display:flex;align-items:center;gap:12px;}
+  .filter-input{display:flex;align-items:center;gap:8px;background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 14px;flex:1;max-width:320px;}
+  .filter-input input{border:none;outline:none;font-size:13px;color:var(--text-primary);background:transparent;width:100%;}
+  .filter-input span{color:var(--text-muted);}
+  .filter-pill{font-size:12px;font-weight:600;padding:7px 14px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--surface-card);color:var(--text-secondary);cursor:pointer;}
+  .filter-pill.active{background:var(--brand-primary);color:var(--brand-accent);border-color:var(--brand-primary);}
+  .filter-count{font-size:11px;color:var(--text-muted);margin-left:auto;}
+
+  /* TABLE */
+  .table-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;}
+  .table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 120px;gap:0;padding:11px 24px;background:var(--surface-muted);border-bottom:1px solid var(--border);}
+  .th{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+
+  /* ROW */
+  .cand-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 120px;gap:0;padding:0;border-bottom:1px solid var(--surface-muted);cursor:pointer;transition:background .1s;}
+  .cand-row:last-child{border-bottom:none;}
+  .cand-row:hover{background:var(--surface-subtle,#F7FAF8);}
+  .cand-row.expanded{background:rgba(77,199,138,.03);border-bottom:none;}
+  .cand-cell{padding:14px 24px;display:flex;align-items:center;}
+
+  .cand-av{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--brand-accent-lt);color:var(--brand-deep);font-family:var(--font-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:12px;}
+  .cand-name{font-size:14px;font-weight:600;color:var(--text-primary);}
+  .cand-specialty{font-size:12px;color:var(--text-secondary);margin-top:1px;}
+
+  /* TAGS */
+  .tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:var(--radius-full);}
+  .tag-pending{background:#FEF3E2;color:var(--state-warning);}
+  .tag-review{background:#E8F4FD;color:var(--state-info);}
+  .tag-approved{background:#E8F8EE;color:var(--state-success);}
+  .tag-rejected{background:#FDECEA;color:var(--state-error);}
+
+  /* EXPAND PANEL */
+  .expand-panel{background:rgba(77,199,138,.02);border-top:1px dashed var(--border);padding:20px 24px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;border-bottom:1px solid var(--surface-muted);}
+  .ep-section h4{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .ep-item{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:4px;}
+  .ep-item strong{color:var(--text-primary);font-weight:600;}
+  .ep-actions{display:flex;gap:8px;margin-top:16px;grid-column:1/-1;}
+  .btn-review{font-family:var(--font-d);font-size:12px;font-weight:700;background:var(--brand-primary);color:var(--brand-accent);padding:8px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;}
+  .btn-approve{font-family:var(--font-d);font-size:12px;font-weight:700;background:#E8F8EE;color:var(--state-success);border:1px solid var(--state-success);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;}
+  .btn-reject{font-size:12px;font-weight:600;background:#FDECEA;color:var(--state-error);border:1px solid var(--state-error);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;}
+  .btn-detail{font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--surface-muted);border:1px solid var(--border);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;}
+
+  /* STATS BAR */
+  .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .stat-mini{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow-sm);}
+  .sm-label{font-size:12px;color:var(--text-secondary);margin-bottom:4px;}
+  .sm-val{font-family:var(--font-m);font-size:24px;font-weight:500;color:var(--text-primary);}
+  .sm-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+  .cand-date{font-size:12px;color:var(--text-muted);}
+  .cand-sla{font-size:11px;font-weight:600;}
+  .sla-ok{color:var(--state-success);}
+  .sla-warn{color:var(--state-warning);}
+  .sla-urgent{color:var(--state-error);}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">FracExec</div>
+    <div class="sb-sub">Painel Operacional</div>
+  </div>
+  <div class="sb-section">Operações</div>
+  <div class="sb-item"><span class="sb-icon">◈</span> Dashboard</div>
+  <div class="sb-item active"><span class="sb-icon">◻</span> Candidaturas <span class="sb-badge">7</span></div>
+  <div class="sb-item"><span class="sb-icon">◆</span> Pool de executivos</div>
+  <div class="sb-item"><span class="sb-icon">◎</span> Necessidades <span class="sb-badge">3</span></div>
+  <div class="sb-item"><span class="sb-icon">⚠</span> Conflitos <span class="sb-badge">2</span></div>
+  <div class="sb-item"><span class="sb-icon">◑</span> Engajamentos</div>
+  <div class="sb-item"><span class="sb-icon">▣</span> Contratos</div>
+  <div class="sb-footer">
+    <div class="u-chip">
+      <div class="u-av">AN</div>
+      <div><div class="u-name">Ana Neri</div><div class="u-role">Admin · FracExec</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div>
+      <div class="tb-title">Candidaturas de Executivos</div>
+      <div class="tb-sub">Fila de verificação e aprovação</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div class="stats-bar">
+      <div class="stat-mini"><div class="sm-label">Pendentes</div><div class="sm-val" style="color:var(--state-warning)">4</div><div class="sm-sub">aguardando triagem</div></div>
+      <div class="stat-mini"><div class="sm-label">Em análise</div><div class="sm-val" style="color:var(--state-info)">3</div><div class="sm-sub">revisão em andamento</div></div>
+      <div class="stat-mini"><div class="sm-label">Aprovados (mês)</div><div class="sm-val" style="color:var(--state-success)">12</div><div class="sm-sub">em mai/2026</div></div>
+      <div class="stat-mini"><div class="sm-label">Taxa de aprovação</div><div class="sm-val">41%</div><div class="sm-sub">últimos 30 dias</div></div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar">
+      <div class="filter-input"><span>🔍</span><input type="text" placeholder="Buscar por nome, especialidade ou setor..."></div>
+      <div class="filter-pill active">Todos (7)</div>
+      <div class="filter-pill">Pendentes (4)</div>
+      <div class="filter-pill">Em análise (3)</div>
+      <div class="filter-pill">CFO</div>
+      <div class="filter-pill">CTO</div>
+      <span class="filter-count">7 candidaturas encontradas</span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="th">Candidato</div>
+        <div class="th">Especialidade</div>
+        <div class="th">Status</div>
+        <div class="th">Entrada · SLA</div>
+        <div class="th">Ações</div>
+      </div>
+
+      <!-- ROW EXPANDED -->
+      <div class="cand-row expanded">
+        <div class="cand-cell"><div class="cand-av">MA</div><div><div class="cand-name">Marcus Almeida</div><div class="cand-specialty">CFO · Varejo, Logística</div></div></div>
+        <div class="cand-cell"><span style="font-size:13px;color:var(--text-secondary);">CFO</span></div>
+        <div class="cand-cell"><span class="tag tag-review">Em análise</span></div>
+        <div class="cand-cell"><div><div class="cand-date">20/mai/2026</div><div class="cand-sla sla-warn">SLA: 4 dias restantes</div></div></div>
+        <div class="cand-cell"><span style="font-size:12px;color:var(--brand-deep);font-weight:600;cursor:pointer;">▲ Recolher</span></div>
+      </div>
+      <!-- EXPAND PANEL -->
+      <div class="expand-panel">
+        <div class="ep-section">
+          <h4>Experiência C-Level</h4>
+          <div class="ep-item"><strong>CFO · Varejo</strong> — mar/2018 a nov/2024</div>
+          <div class="ep-item">Equipe de 30 pessoas · Receita R$300M+</div>
+          <div class="ep-item"><strong>CFO · Logística</strong> — jan/2014 a fev/2018</div>
+          <div class="ep-item">Equipe de 15 pessoas · Receita R$80M</div>
+        </div>
+        <div class="ep-section">
+          <h4>Referências</h4>
+          <div class="ep-item"><strong>João Pereira</strong> — CEO, GrupoMax Varejo</div>
+          <div class="ep-item">joao@grupomax.com.br · (11) 99xxx-xxxx</div>
+          <div class="ep-item" style="margin-top:8px;"><strong>Carla Souza</strong> — Board Member, Logicenter</div>
+          <div class="ep-item">carla@logicenter.com.br</div>
+        </div>
+        <div class="ep-section">
+          <h4>Motivação</h4>
+          <div class="ep-item" style="font-style:italic;">"Quero contribuir com empresas que precisam de estrutura financeira real mas não têm capacidade de contratar um CFO full-time. Tenho 18 anos de cadeira e quero continuar relevante."</div>
+        </div>
+        <div class="ep-actions">
+          <button class="btn-approve">✓ Aprovar candidatura</button>
+          <button class="btn-reject">✕ Rejeitar</button>
+          <button class="btn-detail">Ver perfil completo →</button>
+          <div style="margin-left:auto;font-size:12px;color:var(--text-muted);">LinkedIn verificado · 3 notas internas</div>
+        </div>
+      </div>
+
+      <!-- ROW 2 -->
+      <div class="cand-row">
+        <div class="cand-cell"><div class="cand-av">PR</div><div><div class="cand-name">Paulo Ramos</div><div class="cand-specialty">CTO · Fintech, SaaS</div></div></div>
+        <div class="cand-cell"><span style="font-size:13px;color:var(--text-secondary);">CTO</span></div>
+        <div class="cand-cell"><span class="tag tag-review">Em análise</span></div>
+        <div class="cand-cell"><div><div class="cand-date">22/mai/2026</div><div class="cand-sla sla-ok">SLA: 8 dias restantes</div></div></div>
+        <div class="cand-cell"><span style="font-size:12px;color:var(--brand-deep);font-weight:600;cursor:pointer;">▼ Expandir</span></div>
+      </div>
+
+      <!-- ROW 3 -->
+      <div class="cand-row">
+        <div class="cand-cell"><div class="cand-av">FS</div><div><div class="cand-name">Fernanda Silva</div><div class="cand-specialty">CMO · Consumo, Digital</div></div></div>
+        <div class="cand-cell"><span style="font-size:13px;color:var(--text-secondary);">CMO</span></div>
+        <div class="cand-cell"><span class="tag tag-pending">Pendente</span></div>
+        <div class="cand-cell"><div><div class="cand-date">27/mai/2026</div><div class="cand-sla sla-ok">SLA: 10 dias</div></div></div>
+        <div class="cand-cell"><button class="btn-review">Iniciar análise</button></div>
+      </div>
+
+      <!-- ROW 4 -->
+      <div class="cand-row">
+        <div class="cand-cell"><div class="cand-av">RB</div><div><div class="cand-name">Roberto Braga</div><div class="cand-specialty">COO · Indústria, Agro</div></div></div>
+        <div class="cand-cell"><span style="font-size:13px;color:var(--text-secondary);">COO</span></div>
+        <div class="cand-cell"><span class="tag tag-pending">Pendente</span></div>
+        <div class="cand-cell"><div><div class="cand-date">28/mai/2026</div><div class="cand-sla sla-ok">SLA: 10 dias</div></div></div>
+        <div class="cand-cell"><button class="btn-review">Iniciar análise</button></div>
+      </div>
+
+      <!-- ROW 5 -->
+      <div class="cand-row">
+        <div class="cand-cell"><div class="cand-av">LC</div><div><div class="cand-name">Lúcia Castro</div><div class="cand-specialty">CFO · Saúde, Educação</div></div></div>
+        <div class="cand-cell"><span style="font-size:13px;color:var(--text-secondary);">CFO</span></div>
+        <div class="cand-cell"><span class="tag tag-pending">Pendente</span></div>
+        <div class="cand-cell"><div><div class="cand-date">29/mai/2026</div><div class="cand-sla sla-ok">SLA: 10 dias</div></div></div>
+        <div class="cand-cell"><button class="btn-review">Iniciar análise</button></div>
+      </div>
+
+    </div>
+  </div>
+</main>
+</body>
+</html>

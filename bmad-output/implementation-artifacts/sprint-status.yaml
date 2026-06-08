@@ -1,0 +1,105 @@
+# generated: 2026-05-29
+# last_updated: 2026-05-29 (1.1 → done, 1.2 → ready-for-dev)
+# project: FracExec
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-05-29
+last_updated: 2026-05-29
+project: FracExec
+project_key: NOKEY
+tracking_system: file-system
+story_location: bmad-output/implementation-artifacts
+
+development_status:
+  # ─── Epic 1: Foundation & Infrastructure ───────────────────────────────────
+  epic-1: in-progress
+  1-1-project-bootstrap-and-local-dev-environment: done
+  1-2-user-authentication-and-role-system: done
+  1-3-fracexec-angular-design-system: done
+  1-4-portal-shells-and-navigation: done
+  epic-1-retrospective: optional
+
+  # ─── Epic 2: Executive Application & Active Profile ────────────────────────
+  epic-2: in-progress
+  2-1-public-application-form-stepper: done
+  2-2-admin-candidacy-queue-with-inline-expansion: done
+  2-3-candidacy-review-decision-and-notification: done
+  2-4-executive-profile-completion: done
+  2-5-seal-banner-and-availability-management: done
+  2-6-admin-executive-pool-view: done
+  epic-2-retrospective: optional
+
+  # ─── Epic 3: SMB Registration & Need Posting ──────────────────────────────
+  epic-3: in-progress
+  3-1-smb-registration-form: done
+  3-2-smb-need-posting-form: done
+  3-3-smb-company-dashboard-with-need-funnel: done
+  3-4-admin-needs-queue: done
+  epic-3-retrospective: optional
+
+  # ─── Epic 4: Match, Shortlist & Mediation ─────────────────────────────────
+  epic-4: done
+  4-1-conflict-of-interest-registry: done
+  4-2-shortlist-builder-split-view: done
+  4-3-conflict-review-and-admin-decision: done
+  4-4-anonymized-profiles-and-smb-selection: done
+  4-5-executive-opportunity-response: done
+  4-6-mediation-thread: done
+  epic-4-retrospective: optional
+
+  # ─── Epic 5: Contract, Payments & Engagements ─────────────────────────────
+  epic-5: done
+  5-1-contract-generation-and-signature: done
+  5-2-stripe-integration-and-recurring-payment: done
+  5-3-escrow-window-and-executive-transfer: done
+  5-4-executive-payment-dashboard: done
+  5-5-smb-contract-and-payment-history: done
+  epic-5-retrospective: optional
+
+  # ─── Epic 6: Complete Dashboards, Admin Operations & Production Readiness ──
+  epic-6: done
+  6-1-executive-dashboard-completion: done
+  6-2-admin-dashboard-and-full-operations-panel: done
+  6-3-lgpd-compliance-and-data-deletion: done
+  6-4-production-readiness-and-observability: done
+  epic-6-retrospective: optional
+
+  # ─── Epic 7: AWS Infrastructure & Production Deployment ──────────────────
+  epic-7: backlog
+  7-1-terraform-networking-compute: backlog
+  7-2-terraform-database-storage: backlog
+  7-3-terraform-cloudfront-dns: backlog
+  7-4-pipeline-cicd-github-actions: backlog
+  7-5-application-prod-yml-code-adjustments: backlog
+  epic-7-retrospective: optional
