@@ -86,9 +86,9 @@ export class CompanyPayments implements OnInit {
     this.http.get<PaymentItem[]>('/api/v1/company/payments')
       .pipe(takeUntilDestroyed(this.destroy))
       .subscribe({ next: l => { this.payments.set(l); this.loading.set(false); }, error: () => this.loading.set(false) });
-    this.http.get<{ content: ContractItem[] }>('/api/v1/company/contracts')
+    this.http.get<ContractItem[] | { content: ContractItem[] }>('/api/v1/company/contracts')
       .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({ next: r => this.contracts.set(r.content ?? (r as unknown as ContractItem[])) });
+      .subscribe({ next: r => this.contracts.set(Array.isArray(r) ? r : r.content) });
   }
 
   downloadContract(id: string): void {

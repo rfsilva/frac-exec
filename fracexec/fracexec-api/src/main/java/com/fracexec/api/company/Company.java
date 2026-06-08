@@ -55,6 +55,7 @@ public class Company {
 
     protected Company() {}
 
+    @SuppressWarnings("java:S107") // entidade JPA — todos os campos são obrigatórios na criação
     public Company(String legalName, String cnpj, String sector,
                    String employeeRange, String annualRevenueRange,
                    String responsibleName, String responsibleEmail, User user) {

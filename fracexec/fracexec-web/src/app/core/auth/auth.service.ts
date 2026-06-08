@@ -13,7 +13,7 @@ export class AuthService {
 
   private readonly apiBase = '/api/v1/auth';
 
-  private _currentUser = signal<User | null>(this.loadUserFromStorage());
+  private readonly _currentUser = signal<User | null>(this.loadUserFromStorage());
   readonly currentUser  = this._currentUser.asReadonly();
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
 

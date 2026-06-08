@@ -2,7 +2,6 @@ package com.fracexec.api.company;
 
 import com.fracexec.api.contract.*;
 import com.fracexec.api.contract.dto.ContractResponse;
-import com.fracexec.api.contract.dto.PaymentResponse;
 import com.fracexec.api.contract.service.ContractService;
 import com.fracexec.api.contract.service.PaymentService;
 import com.fracexec.api.shared.auth.repository.UserRepository;
@@ -47,16 +46,7 @@ public class CompanyContractController {
         var company = findCompany(auth);
         return contractRepository.findAll().stream()
             .filter(c -> c.getEngagement().getNeed().getCompany().getId().equals(company.getId()))
-            .map(c -> contractService.getDownloadUrl(c.getId()) != null
-                ? new ContractResponse(c.getId(), c.getEngagement().getId(),
-                    c.getEngagement().getNeed().getId(),
-                    company.getLegalName(),
-                    c.getEngagement().getExecutiveProfile().getUser() != null
-                        ? c.getEngagement().getExecutiveProfile().getUser().getEmail() : "N/A",
-                    c.getMonthlyValue(), c.getScopeDaysPerMonth(), c.getDurationMonths(),
-                    c.isSignedByPme(), c.isSignedByExecutive(), c.isFullySigned(),
-                    null, c.getGeneratedAt(), c.getFullySignedAt())
-                : null)
+            .map(c -> toContractResponse(c, company))
             .filter(r -> r != null)
             .toList();
     }
@@ -83,8 +73,11 @@ public class CompanyContractController {
         var lastPaid = payments.stream()
             .filter(p -> "PAID".equals(p.status()) || "TRANSFERRED".equals(p.status()))
             .max((a, b) -> {
-                var ta = a.paidAt(); var tb = b.paidAt();
-                return ta == null ? -1 : tb == null ? 1 : ta.compareTo(tb);
+                var ta = a.paidAt();
+                var tb = b.paidAt();
+                if (ta == null) return -1;
+                if (tb == null) return 1;
+                return ta.compareTo(tb);
             }).orElse(null);
 
         var nextDue = payments.stream()
@@ -95,6 +88,19 @@ public class CompanyContractController {
             "lastPayment", lastPaid != null ? lastPaid : Map.of(),
             "nextDue", nextDue != null ? nextDue : Map.of()
         );
+    }
+
+    private ContractResponse toContractResponse(Contract c, Company company) {
+        if (contractService.getDownloadUrl(c.getId()) == null) return null;
+        var execUser = c.getEngagement().getExecutiveProfile().getUser();
+        String execEmail = execUser != null ? execUser.getEmail() : "N/A";
+        return new ContractResponse(
+            c.getId(), c.getEngagement().getId(),
+            c.getEngagement().getNeed().getId(),
+            company.getLegalName(), execEmail,
+            c.getMonthlyValue(), c.getScopeDaysPerMonth(), c.getDurationMonths(),
+            c.isSignedByPme(), c.isSignedByExecutive(), c.isFullySigned(),
+            null, c.getGeneratedAt(), c.getFullySignedAt());
     }
 
     private Company findCompany(Authentication auth) {

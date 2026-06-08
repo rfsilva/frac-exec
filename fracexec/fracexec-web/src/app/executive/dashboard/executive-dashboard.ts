@@ -181,7 +181,9 @@ export class ExecutiveDashboard implements OnInit {
   get progressPct(): number { return Math.round((this.availabilityDays() / 20) * 100); }
 
   engStatus(status: string): BadgeVariant {
-    return status === 'ACTIVE' ? 'status-active' : status === 'PAUSED' ? 'status-warning' : 'neutral';
+    if (status === 'ACTIVE') return 'status-active';
+    if (status === 'PAUSED') return 'status-warning';
+    return 'neutral';
   }
 
   ngOnInit(): void {
