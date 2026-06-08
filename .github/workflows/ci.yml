@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, develop]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   backend:
     name: Backend (Maven + Tests)
@@ -33,12 +36,14 @@ jobs:
         with:
           name: jacoco-report
           path: fracexec/fracexec-api/target/site/jacoco/jacoco.xml
+          if-no-files-found: warn
 
-      - name: Upload compiled classes (necessário para análise Java)
+      - name: Upload compiled classes
         uses: actions/upload-artifact@v4
         with:
           name: java-classes
           path: fracexec/fracexec-api/target/classes
+          if-no-files-found: warn
 
   frontend:
     name: Frontend (Angular Build)
@@ -71,6 +76,7 @@ jobs:
         with:
           name: lcov-report
           path: fracexec/fracexec-web/coverage/lcov.info
+          if-no-files-found: warn
 
       - name: Build Angular
         working-directory: fracexec/fracexec-web
@@ -98,6 +104,7 @@ jobs:
           path: fracexec/fracexec-api/target/classes
 
       - name: Download lcov report
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: lcov-report
