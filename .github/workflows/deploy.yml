@@ -49,6 +49,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: fracexec/fracexec-web/package-lock.json
 
+      - name: Upgrade npm to match packageManager field
+        run: npm install -g npm@11.6.2
+
       - name: Build Angular
         working-directory: fracexec/fracexec-web
         run: npm ci && npx ng build --configuration=production
