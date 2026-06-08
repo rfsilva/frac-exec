@@ -83,7 +83,7 @@ export class ConflictReview implements OnInit {
   readonly needState      = signal('—');
 
   private itemId = '';
-  private needId = '';
+  private readonly needId = '';
 
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('id') ?? '';

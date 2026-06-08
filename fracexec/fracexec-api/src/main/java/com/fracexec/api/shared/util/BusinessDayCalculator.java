@@ -17,7 +17,7 @@ public final class BusinessDayCalculator {
         while (added < days) {
             date = date.plusDays(1);
             DayOfWeek dow = date.getDayOfWeek();
-            if (dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY) {
+            if (!dow.equals(DayOfWeek.SATURDAY) && !dow.equals(DayOfWeek.SUNDAY)) {
                 added++;
             }
         }
@@ -31,7 +31,7 @@ public final class BusinessDayCalculator {
         LocalDate cursor = today;
         while (!cursor.isAfter(deadlineDate)) {
             DayOfWeek dow = cursor.getDayOfWeek();
-            if (dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY) {
+            if (!dow.equals(DayOfWeek.SATURDAY) && !dow.equals(DayOfWeek.SUNDAY)) {
                 count++;
             }
             cursor = cursor.plusDays(1);

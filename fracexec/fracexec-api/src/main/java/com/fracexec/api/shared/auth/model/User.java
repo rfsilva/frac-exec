@@ -59,7 +59,13 @@ public class User implements UserDetails {
     }
 
     public UUID getId() { return id; }
+
+    // getEmail() retorna o mesmo que getUsername() intencionalmente:
+    // getUsername() é contrato do UserDetails (Spring Security);
+    // getEmail() é a API de domínio usada no restante da aplicação.
+    @SuppressWarnings("java:S4144")
     public String getEmail() { return email; }
+
     public Role getRole() { return role; }
     public Instant getCreatedAt() { return createdAt; }
 }

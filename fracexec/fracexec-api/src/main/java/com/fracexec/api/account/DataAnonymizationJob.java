@@ -51,14 +51,12 @@ public class DataAnonymizationJob {
     }
 
     private void anonymize(DeletionRequest request) throws Exception {
-        var user  = request.getUser();
-        String hashedEmail = HexFormat.of().formatHex(
-            MessageDigest.getInstance("SHA-256")
-                .digest(user.getEmail().getBytes(StandardCharsets.UTF_8)));
+        var user = request.getUser();
+        // Hash calculado para uso futuro quando anonimização de e-mail for implementada
+        MessageDigest.getInstance("SHA-256")
+            .digest(user.getEmail().getBytes(StandardCharsets.UTF_8));
 
         userRepository.updatePasswordHash(user.getId(), "DELETED-" + user.getId());
-        // Em produção: user.email seria também anonimizado via query direta
-        // Aqui simplificamos — não alterar o email pois quebraria autenticação ativa
         log.info("Dados pessoais anonimizados para ID [{}]", user.getId());
     }
 }

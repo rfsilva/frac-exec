@@ -2,7 +2,6 @@ package com.fracexec.api.match;
 
 import com.fracexec.api.company.CompanyRepository;
 import com.fracexec.api.company.NeedRepository;
-import com.fracexec.api.executive.repository.ExecutiveProfileRepository;
 import com.fracexec.api.match.dto.MediationMessageResponse;
 import com.fracexec.api.match.dto.SendMessageRequest;
 import com.fracexec.api.notification.service.EmailService;
@@ -28,20 +27,17 @@ public class MediationController {
     private final MediationMessageRepository messageRepository;
     private final NeedRepository             needRepository;
     private final CompanyRepository          companyRepository;
-    private final ExecutiveProfileRepository profileRepository;
     private final UserRepository             userRepository;
     private final EmailService               emailService;
 
     public MediationController(MediationMessageRepository messageRepository,
                                NeedRepository needRepository,
                                CompanyRepository companyRepository,
-                               ExecutiveProfileRepository profileRepository,
                                UserRepository userRepository,
                                EmailService emailService) {
         this.messageRepository = messageRepository;
         this.needRepository    = needRepository;
         this.companyRepository = companyRepository;
-        this.profileRepository = profileRepository;
         this.userRepository    = userRepository;
         this.emailService      = emailService;
     }

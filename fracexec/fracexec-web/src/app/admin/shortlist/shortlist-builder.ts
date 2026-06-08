@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { BadgeVariant, StatusBadge } from '../../shared/components/status-badge/status-badge';
+import { StatusBadge } from '../../shared/components/status-badge/status-badge';
 import { LoadingSkeleton } from '../../shared/components/loading-skeleton/loading-skeleton';
 
 interface PoolItem {

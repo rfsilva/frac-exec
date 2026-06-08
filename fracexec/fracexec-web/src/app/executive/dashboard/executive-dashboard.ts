@@ -169,7 +169,7 @@ export class ExecutiveDashboard implements OnInit {
 
   private readonly http       = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
-  @ViewChild(AvailabilityDrawer) private drawerRef?: AvailabilityDrawer;
+  @ViewChild(AvailabilityDrawer) private readonly drawerRef?: AvailabilityDrawer;
 
   readonly availabilityDays = signal(20);
   readonly profileStatus    = signal<string | null>(null);
