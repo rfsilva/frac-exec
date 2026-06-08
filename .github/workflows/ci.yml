@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # necessário para análise completa do SonarCloud
+          fetch-depth: 0
 
       - name: Set up Java 21
         uses: actions/setup-java@v4
@@ -28,13 +28,17 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: test
 
-      - name: SonarCloud Scan — Backend
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
         with:
-          projectBaseDir: fracexec/fracexec-api
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+          name: jacoco-report
+          path: fracexec/fracexec-api/target/site/jacoco/jacoco.xml
+
+      - name: Upload compiled classes (necessário para análise Java)
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-classes
+          path: fracexec/fracexec-api/target/classes
 
   frontend:
     name: Frontend (Angular Build)
@@ -42,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # necessário para análise completa do SonarCloud
+          fetch-depth: 0
 
       - name: Set up Node 22
         uses: actions/setup-node@v4
@@ -59,22 +63,55 @@ jobs:
         working-directory: fracexec/fracexec-web
         run: npx ng test --configuration=ci --watch=false
 
+      - name: Upload lcov report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov-report
+          path: fracexec/fracexec-web/coverage/lcov.info
+
       - name: Build Angular
         working-directory: fracexec/fracexec-web
         run: npx ng build --configuration=production
 
-      - name: SonarCloud Scan — Frontend
+  sonar:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download JaCoCo report
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: fracexec/fracexec-api/target/site/jacoco
+
+      - name: Download Java classes
+        uses: actions/download-artifact@v4
+        with:
+          name: java-classes
+          path: fracexec/fracexec-api/target/classes
+
+      - name: Download lcov report
+        uses: actions/download-artifact@v4
+        with:
+          name: lcov-report
+          path: fracexec/fracexec-web/coverage
+
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: fracexec/fracexec-web
+          projectBaseDir: fracexec
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   docker:
     name: Docker Build (API)
     runs-on: ubuntu-latest
-    needs: [backend, frontend]
+    needs: [sonar]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
