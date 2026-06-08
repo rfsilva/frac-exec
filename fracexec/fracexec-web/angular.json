@@ -75,8 +75,7 @@
             "ci": {
               "reporters": ["verbose"],
               "coverage": true,
-              "coverageReporters": ["lcov", "text-summary"],
-              "coverageDirectory": "coverage"
+              "coverageReporters": ["lcov", "text-summary"]
             }
           }
         }
