@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 
 @Component
@@ -38,8 +39,8 @@ public class JwtUtil {
         return Jwts.builder()
             .subject(user.getEmail())
             .claim("role", user.getRole().name())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + expirationMs))
+            .issuedAt(Date.from(Instant.now()))
+            .expiration(Date.from(Instant.now().plusMillis(expirationMs)))
             .signWith(signingKey)
             .compact();
     }
@@ -64,7 +65,7 @@ public class JwtUtil {
         try {
             Claims claims = extractAllClaims(token);
             return claims.getSubject().equals(userDetails.getUsername())
-                && claims.getExpiration().after(new Date());
+                && claims.getExpiration().toInstant().isAfter(Instant.now());
         } catch (Exception e) {
             return false;
         }

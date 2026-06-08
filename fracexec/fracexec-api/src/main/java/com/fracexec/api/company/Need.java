@@ -55,6 +55,7 @@ public class Need {
 
     protected Need() {}
 
+    @SuppressWarnings("java:S107") // entidade JPA — todos os campos são obrigatórios na criação
     public Need(Company company, String cLevelType, String scopeDaysPerMonth,
                 String estimatedDuration, LocalDate desiredStart,
                 String challengeDescription, String expectedResult,

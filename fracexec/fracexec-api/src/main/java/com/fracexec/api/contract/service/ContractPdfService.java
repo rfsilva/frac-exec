@@ -19,7 +19,7 @@ public class ContractPdfService {
     private static final DateTimeFormatter DATE_FMT =
         DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("America/Sao_Paulo"));
 
-    public byte[] generate(Contract contract) {
+    public byte[] generate(Contract contract) throws com.lowagie.text.DocumentException {
         var engagement = contract.getEngagement();
         var need       = engagement.getNeed();
         var company    = need.getCompany();
@@ -80,8 +80,10 @@ public class ContractPdfService {
 
             doc.close();
             return out.toByteArray();
+        } catch (com.lowagie.text.DocumentException e) {
+            throw new com.lowagie.text.DocumentException("Erro ao gerar contrato PDF: " + e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar contrato PDF: " + e.getMessage(), e);
+            throw new com.lowagie.text.DocumentException("Erro inesperado ao gerar contrato PDF: " + e.getMessage());
         }
     }
 }
