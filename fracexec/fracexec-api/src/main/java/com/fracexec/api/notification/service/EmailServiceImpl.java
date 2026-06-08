@@ -18,7 +18,9 @@ import java.time.format.DateTimeFormatter;
 public class EmailServiceImpl implements EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
-    private static final String TEMPLATE_DIR = "templates/email/";
+    private static final String TEMPLATE_DIR    = "templates/email/";
+    private static final String PH_APPLICANT    = "{{applicantName}}";
+    private static final String PH_COMPANY      = "{{companyName}}";
     private static final DateTimeFormatter DATE_FMT =
         DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("America/Sao_Paulo"));
 
@@ -31,14 +33,14 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendApplicationReceived(String toEmail, String applicantName) {
         String body = loadTemplate("application-received.html")
-            .replace("{{applicantName}}", applicantName);
+            .replace(PH_APPLICANT, applicantName);
         sendHtml(toEmail, "Candidatura recebida — FracExec", body);
     }
 
     @Override
     public void sendApplicationApproved(String toEmail, String applicantName, String profileLink) {
         String body = loadTemplate("application-approved.html")
-            .replace("{{applicantName}}", applicantName)
+            .replace(PH_APPLICANT, applicantName)
             .replace("{{profileLink}}", profileLink);
         sendHtml(toEmail, "Candidatura aprovada — FracExec", body);
     }
@@ -49,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
             ? "Você poderá submeter uma nova candidatura a partir de <strong>" + DATE_FMT.format(reapplyAfter) + "</strong>."
             : "";
         String body = loadTemplate("application-rejected.html")
-            .replace("{{applicantName}}", applicantName)
+            .replace(PH_APPLICANT, applicantName)
             .replace("{{reapplyMessage}}", reapplyMessage);
         sendHtml(toEmail, "Resultado da sua candidatura — FracExec", body);
     }
@@ -57,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendNeedReceived(String toEmail, String companyName) {
         String body = loadTemplate("need-received.html")
-            .replace("{{companyName}}", companyName);
+            .replace(PH_COMPANY, companyName);
         sendHtml(toEmail, "Necessidade recebida — FracExec", body);
     }
 
@@ -129,14 +131,14 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendShortlistSent(String toEmail, String companyName) {
         String body = loadTemplate("shortlist-sent.html")
-            .replace("{{companyName}}", companyName);
+            .replace(PH_COMPANY, companyName);
         sendHtml(toEmail, "Shortlist disponível para revisão — FracExec", body);
     }
 
     @Override
     public void sendCompanyActivated(String toEmail, String companyName, String firstAccessLink) {
         String body = loadTemplate("company-activated.html")
-            .replace("{{companyName}}", companyName)
+            .replace(PH_COMPANY, companyName)
             .replace("{{firstAccessLink}}", firstAccessLink);
         sendHtml(toEmail, "Acesso ativado — FracExec", body);
     }

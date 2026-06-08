@@ -398,7 +398,7 @@ export class Apply {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private readonly fb: FormBuilder, private readonly http: HttpClient) {
     this.form = this.fb.group({
       fullName:    ['', Validators.required],
       email:       ['', [Validators.required, Validators.email]],

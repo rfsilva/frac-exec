@@ -11,7 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Plus Jakarta Sans (display), Inter (body), JetBrains Mono (mono) -->
   <!-- Inter includes weight 700 for StatusBadge and other bold body text -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- NOSONAR: Google Fonts CDN não fornece hashes SRI estáticos (conteúdo dinâmico por UA/região) -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin="anonymous">
 </head>
 <body>
   <app-root></app-root>

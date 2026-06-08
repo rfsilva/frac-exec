@@ -58,24 +58,8 @@ public class EscrowTransferJob {
             var execProfile = engagement.getExecutiveProfile();
             var company     = engagement.getNeed().getCompany();
 
-            // E-mail ao executivo
-            try {
-                emailService.sendPaymentProcessed(
-                    execProfile.getUser().getEmail(),
-                    payment.getGrossAmount(), payment.getFeeAmount(),
-                    payment.getNetAmount(), payment.getTransferredAt());
-            } catch (Exception e) {
-                log.warn("Falha ao enviar e-mail de repasse ao executivo: {}", e.getClass().getSimpleName());
-            }
-
-            // E-mail à PME
-            try {
-                emailService.sendPaymentReceipt(
-                    company.getResponsibleEmail(),
-                    payment.getGrossAmount(), payment.getPaidAt());
-            } catch (Exception e) {
-                log.warn("Falha ao enviar comprovante à PME: {}", e.getClass().getSimpleName());
-            }
+            notifyExecutive(payment, execProfile);
+            notifyCompany(payment, company);
 
             log.info("Repasse [{}] processado — payment [{}]", payment.getNetAmount(), payment.getId());
 
@@ -83,6 +67,27 @@ public class EscrowTransferJob {
             payment.setStatus(PaymentStatus.TRANSFER_FAILED);
             paymentRepository.save(payment);
             log.error("Falha no repasse do pagamento [{}]: {}", payment.getId(), e.getMessage());
+        }
+    }
+
+    private void notifyExecutive(Payment payment, com.fracexec.api.executive.model.ExecutiveProfile execProfile) {
+        try {
+            emailService.sendPaymentProcessed(
+                execProfile.getUser().getEmail(),
+                payment.getGrossAmount(), payment.getFeeAmount(),
+                payment.getNetAmount(), payment.getTransferredAt());
+        } catch (Exception e) {
+            log.warn("Falha ao enviar e-mail de repasse ao executivo: {}", e.getClass().getSimpleName());
+        }
+    }
+
+    private void notifyCompany(Payment payment, com.fracexec.api.company.Company company) {
+        try {
+            emailService.sendPaymentReceipt(
+                company.getResponsibleEmail(),
+                payment.getGrossAmount(), payment.getPaidAt());
+        } catch (Exception e) {
+            log.warn("Falha ao enviar comprovante à PME: {}", e.getClass().getSimpleName());
         }
     }
 }

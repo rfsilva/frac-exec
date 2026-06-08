@@ -1,11 +1,11 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { PageHeader } from '../../shared/layout/page-header/page-header';
-import { StatusBadge, BadgeVariant } from '../../shared/components/status-badge/status-badge';
+import { StatusBadge } from '../../shared/components/status-badge/status-badge';
 import { LoadingSkeleton } from '../../shared/components/loading-skeleton/loading-skeleton';
 
 interface PoolItem {

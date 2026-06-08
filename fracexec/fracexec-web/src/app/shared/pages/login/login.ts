@@ -48,9 +48,9 @@ export class Login {
   errorMessage = signal('');
 
   constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router,
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly router: Router,
   ) {
     this.form = this.fb.nonNullable.group({
       email:    ['', [Validators.required, Validators.email]],

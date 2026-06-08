@@ -50,7 +50,7 @@ export class ExecutiveShell {
   private readonly http       = inject(HttpClient);
   private readonly auth       = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  @ViewChild(AvailabilityDrawer) private drawerRef?: AvailabilityDrawer;
+  @ViewChild(AvailabilityDrawer) private readonly drawerRef?: AvailabilityDrawer;
 
   readonly profileStatus    = signal<SealStatus | null>(null);
   readonly userEmail        = signal<string>('');
