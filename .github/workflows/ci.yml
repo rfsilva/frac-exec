@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: lcov-report
-          path: fracexec/fracexec-web/coverage/lcov.info
+          path: fracexec/fracexec-web/coverage/fracexec-web/lcov.info
           if-no-files-found: warn
 
       - name: Build Angular
@@ -105,7 +105,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: lcov-report
-          path: fracexec/fracexec-web/coverage
+          path: fracexec/fracexec-web/coverage/fracexec-web
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
