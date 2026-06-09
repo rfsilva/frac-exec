@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
+import java.util.Date; // NOSONAR java:S2143 — JJWT 0.12 exige Date na API do builder e Claims
 
 @Component
 public class JwtUtil {
