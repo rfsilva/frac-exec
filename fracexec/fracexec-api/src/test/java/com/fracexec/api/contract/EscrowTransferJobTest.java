@@ -93,20 +93,23 @@ class EscrowTransferJobTest {
     }
 
     @Test
-    void processTransfer_excecao_marcaTransferFailed() {
-        // Pagamento sem engagement válido para forçar NPE
+    void processEscrowTransfers_pagamentoVencido_transfere() {
         Payment payment = new Payment(engagement, new BigDecimal("10000.00"));
-        payment.setStripePaymentIntentId("pi_etj_003");
+        payment.setStripePaymentIntentId("pi_etj_004");
         payment.setStatus(PaymentStatus.PAID);
-        payment.setPaidAt(Instant.now().minusSeconds(3600 * 24 * 10));
+        // Pago há 10 dias — prazo de 5 dias úteis já passou
+        payment.setPaidAt(Instant.now().minusSeconds(3600L * 24 * 10));
         paymentRepository.save(payment);
 
-        // Simula falha: desconecta o engagement após salvar
-        // O método deve capturar a exceção e marcar TRANSFER_FAILED
-        // Aqui testamos o caminho feliz apenas — falha simulada via processTransfer direto
-        escrowTransferJob.processTransfer(payment);
+        escrowTransferJob.processEscrowTransfers();
+
         var updated = paymentRepository.findById(payment.getId()).orElseThrow();
-        // No caminho normal (sem exceção): deve ser TRANSFERRED
         assertEquals(PaymentStatus.TRANSFERRED, updated.getStatus());
+    }
+
+    @Test
+    void processEscrowTransfers_semPagamentos_naoFazNada() {
+        // Nenhum pagamento PAID — não deve lançar exceção
+        assertDoesNotThrow(() -> escrowTransferJob.processEscrowTransfers());
     }
 }
