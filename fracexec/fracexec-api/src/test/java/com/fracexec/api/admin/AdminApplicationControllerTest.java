@@ -5,6 +5,7 @@ import com.fracexec.api.executive.dto.ApplicationPositionDto;
 import com.fracexec.api.executive.dto.ApplicationReferenceDto;
 import com.fracexec.api.executive.dto.ApplicationRequest;
 import com.fracexec.api.executive.dto.RejectRequest;
+import com.fracexec.api.executive.dto.UpdateNotesRequest;
 import com.fracexec.api.executive.dto.UpdateStatusRequest;
 import com.fracexec.api.executive.model.ApplicationStatus;
 import org.junit.jupiter.api.Test;
@@ -187,6 +188,26 @@ class AdminApplicationControllerTest {
                     new RejectRequest("Perfil não atende aos critérios atuais"))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("REJECTED"));
+    }
+
+    // ── Notes ────────────────────────────────────────────────────────────────
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void patch_notes_returns_204() throws Exception {
+        String id = createApplication("notes-test@test.com");
+        mockMvc.perform(patch(LIST_URL + "/" + id + "/notes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UpdateNotesRequest("Nota interna."))))
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void get_document_url_sem_doc_returns_404() throws Exception {
+        String id = createApplication("doc-url-test@test.com");
+        mockMvc.perform(get(LIST_URL + "/" + id + "/documents/url"))
+            .andExpect(status().isNotFound());
     }
 
     // ── Cooldown após rejeição (AC-6) ─────────────────────────────────────────

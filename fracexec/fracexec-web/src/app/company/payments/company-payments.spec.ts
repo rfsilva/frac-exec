@@ -88,4 +88,40 @@ describe('CompanyPayments', () => {
 
     expect(comp.loading()).toBeFalsy();
   });
+
+  it('loading vai para false em erro de API', async () => {
+    const fixture = TestBed.createComponent(CompanyPayments);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/company/payments')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+    httpMock.expectOne('/api/v1/company/contracts').flush([]);
+    await fixture.whenStable();
+    expect(comp.loading()).toBeFalsy();
+  });
+
+  it('statusLabel retorna labels corretos', async () => {
+    const fixture = TestBed.createComponent(CompanyPayments);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    httpMock.match(() => true).forEach(r => r.flush([]));
+    expect(comp.statusLabel('PENDING')).toBe('Aguardando');
+    expect(comp.statusLabel('PAID')).toBe('Pago');
+    expect(comp.statusLabel('TRANSFERRED')).toBe('Repassado');
+    expect(comp.statusLabel('EXPIRED')).toBe('Expirado');
+    expect(comp.statusLabel('OUTRO')).toBe('OUTRO');
+  });
+
+  it('downloadContract chama GET e abre URL', async () => {
+    const fixture = TestBed.createComponent(CompanyPayments);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    httpMock.match(() => true).forEach(r => r.flush([]));
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    comp.downloadContract('c1');
+    httpMock.expectOne('/api/v1/company/contracts/c1/download').flush({ url: 'https://example.com/doc.pdf' });
+    await fixture.whenStable();
+    expect(openSpy).toHaveBeenCalledWith('https://example.com/doc.pdf', '_blank');
+    openSpy.mockRestore();
+  });
 });

@@ -18,31 +18,8 @@ const EXECUTIVE_NAV: NavItem[] = [
   selector: 'app-executive-shell',
   standalone: true,
   imports: [AppShell, SealBanner, AvailabilityDrawer],
-  template: `
-    <div class="exec-layout">
-      <!-- AC-2.5: SealBanner non-dismissible acima do content -->
-      @if (profileStatus()) {
-        <app-seal-banner
-          [profileStatus]="profileStatus()!"
-          [email]="userEmail()"
-          [verificationDate]="null"
-          (updateAvailability)="openDrawer()" />
-      }
-      <app-shell [navItems]="navItems" />
-    </div>
-
-    <!-- Drawer de disponibilidade -->
-    <app-availability-drawer
-      [isOpen]="drawerOpen()"
-      [currentDays]="availabilityDays()"
-      [currentStatus]="profileStatus() ?? 'INACTIVE'"
-      (closed)="drawerOpen.set(false)"
-      (saved)="onAvailabilitySaved($event)" />
-  `,
-  styles: [`
-    .exec-layout { display: flex; flex-direction: column; height: 100vh; }
-    .exec-layout > app-shell { flex: 1; overflow: hidden; }
-  `]
+  templateUrl: './executive-shell.html',
+  styleUrl: './executive-shell.scss'
 })
 export class ExecutiveShell {
   readonly navItems = EXECUTIVE_NAV;

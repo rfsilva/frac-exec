@@ -49,4 +49,33 @@ describe('ExecutivePayments', () => {
     expect(comp.statusLabel('TRANSFER_FAILED')).toBe('Falhou');
     expect(comp.statusLabel('PENDING')).toBe('PENDING');
   });
+
+  it('loading inicia true e vai para false após carga', async () => {
+    const fixture = TestBed.createComponent(ExecutivePayments);
+    const comp = fixture.componentInstance;
+    expect(comp.loading()).toBeTruthy();
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/executive/payments').flush(PAYMENTS);
+    await fixture.whenStable();
+    expect(comp.loading()).toBeFalsy();
+  });
+
+  it('loading vai para false em erro de API', async () => {
+    const fixture = TestBed.createComponent(ExecutivePayments);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/executive/payments')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+    await fixture.whenStable();
+    expect(comp.loading()).toBeFalsy();
+    expect(comp.payments().length).toBe(0);
+  });
+
+  it('lista vazia exibe estado vazio', async () => {
+    const fixture = TestBed.createComponent(ExecutivePayments);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/executive/payments').flush([]);
+    await fixture.whenStable();
+    expect(fixture.componentInstance.payments().length).toBe(0);
+  });
 });

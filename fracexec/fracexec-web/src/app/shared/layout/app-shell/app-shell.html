@@ -1,0 +1,36 @@
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="Menu de navegação">
+
+        <div class="sidebar-header">
+          <div class="avatar">{{ initials }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ displayName }}</span>
+            <span class="user-role">{{ roleLabel }}</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Portal">
+          @for (item of navItems; track item.route) {
+            <a
+              class="nav-item"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: false }"
+            >
+              <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+              <span class="label">{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="btn-logout" (click)="logout()">Sair</button>
+        </div>
+
+      </aside>
+
+      <main class="content">
+        <router-outlet />
+      </main>
+    </div>

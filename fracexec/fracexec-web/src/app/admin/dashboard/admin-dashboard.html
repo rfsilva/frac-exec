@@ -1,0 +1,58 @@
+
+    <div class="page-body">
+      <h1 class="page-title">Dashboard Operacional</h1>
+
+      @if (loading()) { <app-loading-skeleton type="card" /> }
+      @else if (data()) {
+        @let d = data()!;
+
+        <!-- Métricas operacionais -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <span class="label">Candidaturas</span>
+            <span class="value">{{ d.candidatures.total }}</span>
+            <a routerLink="/admin/candidates" class="link">Ver fila →</a>
+          </div>
+          <div class="stat-card">
+            <span class="label">Executivos na pool</span>
+            <span class="value">{{ d.pool.active }}</span>
+            <a routerLink="/admin/pool" class="link">Ver pool →</a>
+          </div>
+          <div class="stat-card">
+            <span class="label">Necessidades ativas</span>
+            <span class="value">{{ d.needs.active }}</span>
+            <a routerLink="/admin/needs" class="link">Ver necessidades →</a>
+          </div>
+          <div class="stat-card">
+            <span class="label">Contratos ativos</span>
+            <span class="value">{{ d.contracts.active }}</span>
+            <a routerLink="/admin/contracts" class="link">Ver contratos →</a>
+          </div>
+        </div>
+
+        <!-- Pipeline financeiro -->
+        <div class="pipeline-card">
+          <h2 class="section-title">Pipeline de Pagamentos</h2>
+          <div class="pipeline-row">
+            <div class="pipe-item">
+              <span class="label">A receber</span>
+              <span class="amount mono">R$ {{ d.paymentPipeline.toReceive | number:'1.2-2' }}</span>
+            </div>
+            <div class="pipe-item">
+              <span class="label">Em escrow</span>
+              <span class="amount mono">R$ {{ d.paymentPipeline.inEscrow | number:'1.2-2' }}</span>
+            </div>
+            <div class="pipe-item">
+              <span class="label">Repassado (mês)</span>
+              <span class="amount mono">R$ {{ d.paymentPipeline.transferred | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LGPD -->
+        <div class="lgpd-card">
+          <h2 class="section-title">LGPD — Exclusão de Dados</h2>
+          <p class="lgpd-count">{{ d.lgpdPendingCount }} solicitações pendentes</p>
+        </div>
+      }
+    </div>

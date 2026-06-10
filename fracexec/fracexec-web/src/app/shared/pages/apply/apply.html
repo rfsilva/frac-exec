@@ -1,0 +1,238 @@
+@if (!submitted()) {
+  <div class="apply-container">
+    <header class="apply-header">
+      <h1 class="apply-title">Candidatura FracExec</h1>
+      <p class="apply-subtitle">Junte-se ao nosso pool de executivos C-Level verificados.</p>
+    </header>
+
+    <!-- Stepper indicator -->
+    <div class="stepper" role="list" aria-label="Etapas da candidatura">
+      @for (step of steps; track step.n) {
+        <div class="step"
+             [class.step--active]="currentStep() === step.n"
+             [class.step--done]="currentStep() > step.n"
+             role="listitem">
+          <div class="step-circle">{{ currentStep() > step.n ? '✓' : step.n }}</div>
+          <span class="step-label">{{ step.label }}</span>
+        </div>
+        @if (!$last) { <div class="step-line"></div> }
+      }
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- ── Etapa 1: Dados pessoais ──────────────────────────── -->
+      @if (currentStep() === 1) {
+        <div class="form-section">
+          <h2 class="section-title">Dados pessoais</h2>
+
+          <div class="field">
+            <label class="label" for="fullName">Nome completo *</label>
+            <input id="fullName" class="input" type="text"
+                   formControlName="fullName" autocomplete="name">
+            @if (f['fullName'].invalid && f['fullName'].touched) {
+              <span class="error">Nome completo é obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label class="label" for="email">E-mail profissional *</label>
+            <input id="email" class="input" type="email"
+                   formControlName="email" autocomplete="email">
+            @if (f['email'].invalid && f['email'].touched) {
+              <span class="error">E-mail válido é obrigatório.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label class="label" for="linkedinUrl">LinkedIn *</label>
+            <input id="linkedinUrl" class="input" type="url"
+                   formControlName="linkedinUrl"
+                   placeholder="https://linkedin.com/in/seu-perfil">
+            @if (f['linkedinUrl'].invalid && f['linkedinUrl'].touched) {
+              <span class="error">URL do LinkedIn inválida. Use o formato: https://linkedin.com/in/seu-perfil</span>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ── Etapa 2: Histórico C-Level ───────────────────────── -->
+      @if (currentStep() === 2) {
+        <div class="form-section">
+          <h2 class="section-title">Histórico C-Level</h2>
+          <p class="section-hint">Adicione ao menos 1 cargo. Nomes de empresa são opcionais e podem ser anonimizados.</p>
+
+          <div formArrayName="positions">
+            @for (pos of positions.controls; track $index) {
+              <div class="position-block" [formGroupName]="$index">
+                <div class="position-header">
+                  <span class="position-label">Cargo {{ $index + 1 }}</span>
+                  @if (positions.length > 1) {
+                    <button type="button" class="btn-remove"
+                            (click)="removePosition($index)"
+                            [attr.aria-label]="'Remover cargo ' + ($index + 1)">
+                      Remover
+                    </button>
+                  }
+                </div>
+
+                <div class="field">
+                  <label class="label">Cargo C-Level *</label>
+                  <input class="input" type="text" formControlName="roleTitle"
+                         placeholder="Ex: CFO, CTO, COO">
+                  @if (pos.get('roleTitle')?.invalid && pos.get('roleTitle')?.touched) {
+                    <span class="error">Cargo é obrigatório.</span>
+                  }
+                </div>
+
+                <div class="field">
+                  <label class="label">Empresa (opcional — será anonimizada)</label>
+                  <input class="input" type="text" formControlName="companyName"
+                         placeholder="Deixe em branco para manter anônimo">
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label class="label">Início *</label>
+                    <input class="input" type="date" formControlName="periodStart">
+                    @if (pos.get('periodStart')?.invalid && pos.get('periodStart')?.touched) {
+                      <span class="error">Data de início obrigatória.</span>
+                    }
+                  </div>
+                  <div class="field">
+                    <label class="label">Fim</label>
+                    <input class="input" type="date" formControlName="periodEnd">
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label class="label">Tamanho da equipe</label>
+                    <input class="input" type="text" formControlName="teamSize"
+                           placeholder="Ex: 50 pessoas">
+                  </div>
+                  <div class="field">
+                    <label class="label">Receita sob gestão</label>
+                    <input class="input" type="text" formControlName="revenueManaged"
+                           placeholder="Ex: R$50M (deixe em branco se não aplicável)">
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <button type="button" class="btn-secondary" (click)="addPosition()">
+            + Adicionar cargo
+          </button>
+        </div>
+      }
+
+      <!-- ── Etapa 3: Referências + Motivação + LGPD ─────────── -->
+      @if (currentStep() === 3) {
+        <div class="form-section">
+          <h2 class="section-title">Referências e motivação</h2>
+
+          <div formArrayName="references">
+            @for (ref of references.controls; track $index) {
+              <div class="reference-block" [formGroupName]="$index">
+                <p class="position-label">Referência {{ $index + 1 }} @if ($index < 2) { <span class="required-badge">obrigatória</span> }</p>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label class="label">Nome *</label>
+                    <input class="input" type="text" formControlName="refName">
+                    @if (ref.get('refName')?.invalid && ref.get('refName')?.touched) {
+                      <span class="error">Nome é obrigatório.</span>
+                    }
+                  </div>
+                  <div class="field">
+                    <label class="label">Cargo *</label>
+                    <input class="input" type="text" formControlName="refRole">
+                    @if (ref.get('refRole')?.invalid && ref.get('refRole')?.touched) {
+                      <span class="error">Cargo é obrigatório.</span>
+                    }
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Contato (e-mail ou telefone) *</label>
+                  <input class="input" type="text" formControlName="refContact">
+                  @if (ref.get('refContact')?.invalid && ref.get('refContact')?.touched) {
+                    <span class="error">Contato é obrigatório.</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <button type="button" class="btn-secondary" (click)="addReference()">
+            + Adicionar referência
+          </button>
+
+          <div class="field" style="margin-top: var(--spacing-6)">
+            <label class="label" for="motivation">Motivação *</label>
+            <textarea id="motivation" class="input textarea" rows="5"
+                      formControlName="motivation"
+                      placeholder="Por que você quer fazer parte do FracExec?"></textarea>
+            @if (f['motivation'].invalid && f['motivation'].touched) {
+              <span class="error">Motivação é obrigatória.</span>
+            }
+          </div>
+
+          <div class="field lgpd-field">
+            <label class="lgpd-label">
+              <input type="checkbox" formControlName="lgpdConsent">
+              <span>
+                Li e aceito os termos de uso e a
+                <a [href]="privacyUrl" class="link" target="_blank" rel="noopener">política de privacidade</a>.
+                Consinto com o tratamento dos meus dados pessoais para fins de verificação e match de oportunidades.
+              </span>
+            </label>
+            @if (f['lgpdConsent'].invalid && f['lgpdConsent'].touched) {
+              <span class="error">O consentimento LGPD é obrigatório para enviar a candidatura.</span>
+            }
+          </div>
+
+          @if (serverError()) {
+            <div class="alert alert--error" role="alert">{{ serverError() }}</div>
+          }
+        </div>
+      }
+
+      <!-- ── Navegação ─────────────────────────────────────────── -->
+      <div class="form-actions">
+        @if (currentStep() > 1) {
+          <button type="button" class="btn-secondary" (click)="prevStep()">
+            ← Etapa anterior
+          </button>
+        }
+        @if (currentStep() < 3) {
+          <button type="button" class="btn-primary" (click)="nextStep()">
+            Próxima etapa →
+          </button>
+        }
+        @if (currentStep() === 3) {
+          <button type="submit" class="btn-primary" [disabled]="submitting()">
+            {{ submitting() ? 'Enviando...' : 'Enviar candidatura' }}
+          </button>
+        }
+      </div>
+    </form>
+  </div>
+}
+
+<!-- ── Tela de confirmação ─────────────────────────────────────── -->
+@if (submitted()) {
+  <div class="confirmation">
+    <div class="confirmation-card">
+      <p class="confirmation-icon">✦</p>
+      <h2 class="confirmation-title">Candidatura recebida.</h2>
+      <p class="confirmation-body">Retorno em até 10 dias úteis.</p>
+      <p class="confirmation-body">
+        Você receberá um e-mail de confirmação com mais detalhes.
+      </p>
+      <div style="margin-top: var(--spacing-4)">
+        <app-status-badge variant="status-pending" label="Aguardando análise" />
+      </div>
+    </div>
+  </div>
+}

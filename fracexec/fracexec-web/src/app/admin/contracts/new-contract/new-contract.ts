@@ -12,77 +12,8 @@ interface PageResponse<T> { content: T[]; }
   selector: 'app-new-contract',
   standalone: true,
   imports: [ReactiveFormsModule],
-  template: `
-    <div class="page-body">
-      <h1 class="page-title">Novo Contrato</h1>
-
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-        <div class="field">
-          <label class="label">Necessidade (IN_MEDIATION) *</label>
-          <select class="input" formControlName="needId">
-            <option value="" disabled>Selecione a necessidade</option>
-            @for (n of needs(); track n.id) {
-              <option [value]="n.id">{{ n.companyLegalName }} — {{ n.cLevelType }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="field">
-          <label class="label">Executivo *</label>
-          <select class="input" formControlName="executiveProfileId">
-            <option value="" disabled>Selecione o executivo</option>
-            @for (p of profiles(); track p.id) {
-              <option [value]="p.id">{{ p.email }} ({{ p.specialties.join(', ') }})</option>
-            }
-          </select>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label class="label">Valor mensal (R$) *</label>
-            <input class="input mono" type="number" min="100" step="100" formControlName="monthlyValue">
-          </div>
-          <div class="field">
-            <label class="label">Dias/mês *</label>
-            <input class="input" type="number" min="1" max="20" formControlName="scopeDaysPerMonth">
-          </div>
-          <div class="field">
-            <label class="label">Duração (meses)</label>
-            <input class="input" type="number" min="1" formControlName="durationMonths">
-          </div>
-        </div>
-
-        @if (error()) {
-          <div class="api-error" role="alert">{{ error() }}</div>
-        }
-        @if (success()) {
-          <div class="api-success">Contrato gerado! PDF enviado por e-mail às partes.</div>
-        }
-
-        <div class="actions">
-          <button type="submit" class="btn btn--primary" [disabled]="form.invalid || loading()">
-            {{ loading() ? 'Gerando...' : 'Gerar contrato' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  `,
-  styles: [`
-    .page-body { padding: var(--spacing-6); max-width: 700px; }
-    .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: var(--spacing-6); }
-    .form { display: flex; flex-direction: column; gap: var(--spacing-4); }
-    .field { display: flex; flex-direction: column; gap: var(--spacing-1); }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); }
-    .label { font-size: 0.875rem; font-weight: 500; }
-    .input { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.9375rem; background: var(--color-surface); }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    .api-error  { padding: var(--spacing-2) var(--spacing-3); background: #ffebee; color: #b71c1c; border-radius: 6px; font-size: 0.875rem; }
-    .api-success { padding: var(--spacing-2) var(--spacing-3); background: #e8f5e9; color: #1b5e20; border-radius: 6px; font-size: 0.875rem; }
-    .actions { display: flex; justify-content: flex-end; }
-    .btn { padding: var(--spacing-2) var(--spacing-5); border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
-    .btn--primary { background: var(--color-primary); color: #fff; }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  `]
+  templateUrl: './new-contract.html',
+  styleUrl: './new-contract.scss'
 })
 export class NewContract implements OnInit {
   private readonly http    = inject(HttpClient);

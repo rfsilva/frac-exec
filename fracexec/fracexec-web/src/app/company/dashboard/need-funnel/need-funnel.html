@@ -1,0 +1,22 @@
+
+    <div class="funnel">
+      @for (step of steps; track step.status; let i = $index) {
+        <div class="funnel-step"
+             [class.funnel-step--active]="step.status === currentStatus"
+             [class.funnel-step--done]="isDone(i)">
+          <div class="step-indicator">
+            <div class="step-circle">{{ isDone(i) ? '✓' : (i + 1) }}</div>
+            @if (!$last) { <div class="step-line"></div> }
+          </div>
+          <div class="step-body">
+            <span class="step-label">{{ step.label }}</span>
+            @if (step.status === currentStatus) {
+              <p class="step-desc">{{ step.description }}</p>
+              @if (step.nextEvent !== '—') {
+                <p class="step-next">Próximo: {{ step.nextEvent }}</p>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>

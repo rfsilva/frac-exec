@@ -1,0 +1,65 @@
+
+    <div class="page-body">
+      <h1 class="page-title">Necessidades</h1>
+
+      <div class="filters">
+        <select class="input select" (change)="onFilter('status', $event)">
+          <option value="">Todos os status</option>
+          <option value="RECEIVED">Recebida</option>
+          <option value="UNDER_ANALYSIS">Em análise</option>
+          <option value="SHORTLIST_SENT">Shortlist enviada</option>
+          <option value="IN_MEDIATION">Em mediação</option>
+          <option value="CONTRACTED">Contratado</option>
+        </select>
+        <select class="input select" (change)="onFilter('cLevelType', $event)">
+          <option value="">Todos os C-Levels</option>
+          <option>CFO</option><option>CTO</option>
+          <option>CMO</option><option>COO</option><option>Outro</option>
+        </select>
+      </div>
+
+      @if (loading()) {
+        <app-loading-skeleton type="table" />
+      } @else if (needs().length === 0) {
+        <p class="empty">Nenhuma necessidade no momento.</p>
+      } @else {
+        <div class="list">
+          @for (need of needs(); track need.id) {
+            <div class="list-item" [class.list-item--expanded]="expandedId() === need.id">
+              <div class="list-row" (click)="toggle(need.id)">
+                <span class="col col--company">{{ need.companyLegalName }}</span>
+                <span class="col col--clevel">{{ need.cLevelType }}</span>
+                <span class="col col--scope">{{ need.scopeDaysPerMonth }} dias/mês
+                  @if (need.estimatedDuration) { · {{ need.estimatedDuration }} }
+                </span>
+                <app-status-badge [variant]="statusVariant(need.status)" [label]="statusLabel(need.status)" />
+                <span class="col col--date">{{ need.createdAt | slice:0:10 }}</span>
+                <span class="chevron">{{ expandedId() === need.id ? '▲' : '▼' }}</span>
+              </div>
+
+              @if (expandedId() === need.id) {
+                <div class="expand-body">
+                  <p><strong>C-Level:</strong> {{ need.cLevelType }}</p>
+                  <p><strong>Escopo:</strong> {{ need.scopeDaysPerMonth }} dias/mês
+                    @if (need.estimatedDuration) { · {{ need.estimatedDuration }} }
+                  </p>
+                  @if (need.status === 'RECEIVED') {
+                    <button class="btn btn--primary"
+                            [disabled]="patching()"
+                            (click)="startAnalysis(need); $event.stopPropagation()">
+                      Iniciar análise
+                    </button>
+                  }
+                  @if (need.status === 'UNDER_ANALYSIS' || need.status === 'SHORTLIST_SENT') {
+                    <a [routerLink]="['/admin/needs', need.id, 'shortlist']"
+                       class="btn btn--primary" (click)="$event.stopPropagation()">
+                      Construir shortlist
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>

@@ -15,7 +15,8 @@ const ADMIN_NAV: NavItem[] = [
   selector: 'app-admin-shell',
   standalone: true,
   imports: [AppShell],
-  template: `<app-shell [navItems]="navItems" />`,
+  templateUrl: './admin-shell.html',
+  styleUrl: './admin-shell.scss',
 })
 export class AdminShell {
   readonly navItems = ADMIN_NAV;

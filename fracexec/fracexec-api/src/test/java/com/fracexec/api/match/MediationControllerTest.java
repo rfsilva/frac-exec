@@ -114,4 +114,33 @@ class MediationControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray());
     }
+
+    @Test
+    @WithMockUser(username = "pme.med@test.com", roles = "PME")
+    void pmeContactAdmin_mensagemValida_retorna201() throws Exception {
+        var req = new SendMessageRequest("Preciso de suporte do admin.");
+        mockMvc.perform(post("/api/v1/company/needs/{needId}/contact-admin", needId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = "exec.med@test.com", roles = "EXECUTIVE")
+    void execContactAdmin_mensagemValida_retorna201() throws Exception {
+        var req = new SendMessageRequest("Executivo precisa de suporte.");
+        mockMvc.perform(post("/api/v1/executive/needs/{needId}/contact-admin", needId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = "admin.med@test.com", roles = "ADMIN")
+    void adminPostMessage_bodyVazio_retorna400() throws Exception {
+        mockMvc.perform(post("/api/v1/admin/needs/{needId}/messages", needId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isBadRequest());
+    }
 }

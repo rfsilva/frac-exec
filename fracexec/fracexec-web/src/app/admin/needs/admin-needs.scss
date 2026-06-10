@@ -1,0 +1,20 @@
+
+    .page-body  { padding: var(--spacing-6); }
+    .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: var(--spacing-4); }
+    .filters    { display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-4); }
+    .input.select { padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.875rem; }
+    .empty      { color: var(--color-text-secondary); padding: var(--spacing-8) 0; }
+    .list-item  { border: 1px solid var(--color-border); border-radius: 6px; margin-bottom: var(--spacing-2); overflow: hidden; }
+    .list-row   { display: flex; align-items: center; gap: var(--spacing-4); padding: var(--spacing-3) var(--spacing-4); cursor: pointer; background: var(--color-surface); }
+    .list-row:hover { background: var(--color-surface-hover, #f5f5f5); }
+    .col        { font-size: 0.875rem; }
+    .col--company { flex: 2; font-weight: 600; }
+    .col--clevel  { flex: 1; }
+    .col--scope   { flex: 1.5; color: var(--color-text-secondary); }
+    .col--date    { flex: 1; color: var(--color-text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; }
+    .chevron    { margin-left: auto; color: var(--color-text-secondary); }
+    .expand-body { padding: var(--spacing-4); background: var(--color-surface-alt, #fafafa); border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .expand-body p { font-size: 0.875rem; margin: 0; }
+    .btn { padding: var(--spacing-2) var(--spacing-4); border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; margin-top: var(--spacing-2); }
+    .btn--primary { background: var(--color-primary); color: #fff; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }

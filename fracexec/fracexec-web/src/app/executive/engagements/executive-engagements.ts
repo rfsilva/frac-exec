@@ -5,6 +5,7 @@ import { PageHeader } from '../../shared/layout/page-header/page-header';
   selector: 'app-executive-engagements',
   standalone: true,
   imports: [PageHeader],
-  template: `<app-page-header title="Engajamentos" [breadcrumb]="['Executivo', 'Engajamentos']" />`,
+  templateUrl: './executive-engagements.html',
+  styleUrl: './executive-engagements.scss',
 })
 export class ExecutiveEngagements {}

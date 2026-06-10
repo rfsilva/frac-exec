@@ -75,7 +75,14 @@
             "ci": {
               "reporters": ["verbose"],
               "coverage": true,
-              "coverageReporters": ["lcov", "text-summary"]
+              "coverageReporters": ["lcov", "text-summary"],
+              "coverageExclude": [
+                "**/*.html",
+                "**/*.scss",
+                "**/environments/**",
+                "**/main.ts",
+                "**/*.routes.ts"
+              ]
             }
           }
         }

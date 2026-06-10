@@ -1,0 +1,50 @@
+<div class="page-body">
+  <h1 class="page-title">Oportunidades</h1>
+
+  @if (loading()) {
+    <p class="loading">Carregando...</p>
+  } @else {
+    @if (active().length > 0) {
+      <section class="section">
+        <h2 class="section-title">Disponíveis</h2>
+        @for (opp of active(); track opp.id) {
+          <div class="opp-card">
+            <div class="opp-header">
+              <span class="clevel-tag">{{ opp.cLevelType }}</span>
+              <span class="sector">{{ opp.companySector }}</span>
+              <span class="expires mono">Expira {{ opp.expiresAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <p class="challenge">{{ opp.challengeSummary }}...</p>
+            <p class="scope">{{ opp.scopeDaysPerMonth }} dias/mês
+              @if (opp.estimatedDuration) { · {{ opp.estimatedDuration }} }
+            </p>
+            <div class="opp-actions">
+              <button class="btn btn--primary" (click)="interest(opp.id)" [disabled]="acting()">Tenho interesse</button>
+              <button class="btn btn--secondary" (click)="decline(opp.id)" [disabled]="acting()">Declinar</button>
+            </div>
+          </div>
+        }
+      </section>
+    } @else {
+      <p class="empty">Nenhuma oportunidade disponível no momento.</p>
+    }
+
+    @if (history().length > 0) {
+      <section class="section">
+        <h2 class="section-title">Histórico</h2>
+        @for (opp of history(); track opp.id) {
+          <div class="opp-card opp-card--history">
+            <div class="opp-header">
+              <span class="clevel-tag">{{ opp.cLevelType }}</span>
+              <span class="sector">{{ opp.companySector }}</span>
+              <span class="status-tag">{{ statusLabel(opp.status) }}</span>
+            </div>
+            @if (opp.canRetract) {
+              <button class="btn btn--sm" (click)="retract(opp.id)">Retratar interesse</button>
+            }
+          </div>
+        }
+      </section>
+    }
+  }
+</div>

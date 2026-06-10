@@ -1,0 +1,83 @@
+
+    <div class="builder-container">
+      <div class="builder-header">
+        <h2 class="builder-title">Construir Shortlist</h2>
+        @if (shortlist()?.canSend) {
+          <button class="btn btn--primary" (click)="sendShortlist()" [disabled]="sending()">
+            {{ sending() ? 'Enviando...' : 'Enviar shortlist' }}
+          </button>
+        } @else if (shortlist()) {
+          <button class="btn btn--primary btn--disabled" disabled
+                  title="Resolva os conflitos antes de enviar ou adicione pelo menos 2 executivos.">
+            Enviar shortlist
+          </button>
+        }
+      </div>
+
+      @if (sendError()) {
+        <div class="alert alert--error">{{ sendError() }}</div>
+      }
+
+      <div class="split-view">
+        <!-- Painel esquerdo: pool -->
+        <div class="panel panel--pool">
+          <h3 class="panel-title">Pool de Executivos</h3>
+          @if (loadingPool()) { <app-loading-skeleton type="list" /> }
+          @else {
+            <div class="pool-list">
+              @for (exec of pool(); track exec.id) {
+                <div class="pool-card" [class.pool-card--disabled]="!exec.isAvailable">
+                  <div class="pool-card-info">
+                    <span class="exec-name">{{ exec.fullName }}</span>
+                    <span class="exec-meta">{{ exec.specialties.join(', ') }}</span>
+                    <span class="exec-avail">{{ exec.availabilityDaysPerMonth }} dias/mês</span>
+                  </div>
+                  <button class="btn btn--sm" (click)="addExecutive(exec.id)"
+                          [disabled]="!exec.isAvailable || adding()">
+                    + Adicionar
+                  </button>
+                </div>
+              }
+              @if (pool().length === 0) {
+                <p class="empty">Nenhum executivo disponível na pool.</p>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Painel direito: shortlist -->
+        <div class="panel panel--shortlist">
+          <h3 class="panel-title">Shortlist ({{ shortlistItems().length }}/4)</h3>
+          @if (loadingShortlist()) { <app-loading-skeleton type="list" /> }
+          @else {
+            <div class="shortlist-slots">
+              @for (item of shortlistItems(); track item.id) {
+                <div class="slot" [class.slot--conflict]="item.conflictStatus === 'PENDING_REVIEW'"
+                                  [class.slot--excluded]="item.conflictStatus === 'EXCLUDED'">
+                  <div class="slot-info">
+                    <span class="exec-name">{{ item.fullName }}</span>
+                    <span class="exec-meta">{{ item.specialties.join(', ') }}</span>
+                    @if (item.conflictStatus === 'PENDING_REVIEW') {
+                      <div class="conflict-badge">
+                        ⚠ {{ item.conflictDetail }}
+                        <a [routerLink]="['/admin/conflicts', item.id]" class="review-link">Revisar conflito</a>
+                      </div>
+                    } @else if (item.conflictStatus === 'APPROVED_WITH_ALERT') {
+                      <span class="alert-badge">⚠ Com alerta</span>
+                    } @else if (item.conflictStatus === 'EXCLUDED') {
+                      <span class="excluded-badge">Excluído</span>
+                    } @else {
+                      <span class="clear-badge">✓ Sem conflito</span>
+                    }
+                  </div>
+                  <button class="btn-remove" (click)="removeExecutive(item.id)">×</button>
+                </div>
+              }
+              @if (shortlistItems().length === 0) {
+                <p class="empty">Adicione executivos da pool para construir a shortlist.</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
