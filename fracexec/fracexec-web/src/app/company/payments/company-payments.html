@@ -1,0 +1,43 @@
+<div class="page-body">
+  <h1 class="page-title">Pagamentos</h1>
+
+  @if (loading()) { <p class="loading">Carregando...</p> }
+  @else {
+    <!-- Pagamentos -->
+    <section class="section">
+      <h2 class="section-title">Histórico de pagamentos</h2>
+      @if (payments().length === 0) { <p class="empty">Nenhum pagamento registrado ainda.</p> }
+      @else {
+        <div class="list">
+          @for (p of payments(); track p.id) {
+            <div class="row">
+              <span class="month">{{ p.referenceMonth ?? '—' }}</span>
+              <span class="amount mono">R$ {{ p.grossAmount | number:'1.2-2' }}</span>
+              <span class="badge" [class.badge--paid]="p.status === 'PAID' || p.status === 'TRANSFERRED'"
+                    [class.badge--pending]="p.status === 'PENDING'">
+                {{ statusLabel(p.status) }}
+              </span>
+              <span class="date">{{ p.paidAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Contratos -->
+    <section class="section">
+      <h2 class="section-title">Contratos</h2>
+      @if (contracts().length === 0) { <p class="empty">Nenhum contrato gerado ainda.</p> }
+      @else {
+        @for (c of contracts(); track c.id) {
+          <div class="row">
+            <span class="exec">{{ c.executiveEmail }}</span>
+            <span class="amount mono">R$ {{ c.monthlyValue | number:'1.2-2' }}/mês</span>
+            <span class="duration">{{ c.durationMonths }} meses</span>
+            <button class="btn btn--sm" (click)="downloadContract(c.id)">Baixar PDF</button>
+          </div>
+        }
+      }
+    </section>
+  }
+</div>

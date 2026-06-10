@@ -1,0 +1,70 @@
+
+    <app-page-header title="Pool de Executivos" [breadcrumb]="['Admin', 'Pool']" />
+
+    <div class="page-body">
+      <!-- Filtros -->
+      <div class="filters">
+        <select class="input select" (change)="onFilter('specialty', $event)">
+          <option value="">Todas especialidades</option>
+          <option value="CFO">CFO</option>
+          <option value="CTO">CTO</option>
+          <option value="CMO">CMO</option>
+          <option value="COO">COO</option>
+          <option value="OUTRO">Outro</option>
+        </select>
+        <input class="input" type="number" min="0" max="20" placeholder="Disp. mínima (dias/mês)"
+               (change)="onFilter('minAvailability', $event)">
+        <input class="input" type="text" placeholder="Setor"
+               (input)="onFilter('sector', $event)">
+        <select class="input select" (change)="onFilter('profileStatus', $event)">
+          <option value="">Todos os status</option>
+          <option value="ACTIVE">Ativo</option>
+          <option value="INACTIVE">Pausado</option>
+          <option value="SUSPENDED">Indisponível</option>
+        </select>
+        <button class="btn-secondary" (click)="clearFilters()">Limpar</button>
+      </div>
+
+      @if (loading()) { <app-loading-skeleton type="list" /> }
+
+      @if (!loading()) {
+        @if (pool().length === 0) {
+          <div class="empty-state">
+            <p class="empty-msg">Nenhum executivo encontrado com esses critérios.</p>
+            <button class="btn-secondary" (click)="clearFilters()">Ajustar filtros</button>
+          </div>
+        } @else {
+          <div class="pool-grid">
+            @for (exec of pool(); track exec.id) {
+              <div class="pool-card" [class.pool-card--unavailable]="!exec.isAvailable"
+                   [routerLink]="['/admin/pool', exec.id]">
+                <div class="card-avatar" [attr.aria-label]="exec.fullName + ' iniciais'">
+                  {{ exec.initials }}
+                </div>
+                <div class="card-info">
+                  <p class="card-name">{{ exec.fullName }}</p>
+                  <p class="card-email text-muted">{{ exec.email }}</p>
+                  <div class="card-tags">
+                    @for (s of exec.specialties; track s) {
+                      <span class="tag">{{ s }}</span>
+                    }
+                  </div>
+                  <p class="card-sectors text-muted">{{ exec.sectors.join(', ') }}</p>
+                </div>
+                <div class="card-right">
+                  <span class="availability-chip"
+                        [class.availability-chip--zero]="exec.availabilityDaysPerMonth === 0">
+                    {{ exec.availabilityDaysPerMonth }} dias/mês
+                  </span>
+                  @if (exec.isAvailable) {
+                    <app-status-badge variant="status-active" label="Disponível" />
+                  } @else {
+                    <app-status-badge variant="neutral" label="Indisponível" />
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>

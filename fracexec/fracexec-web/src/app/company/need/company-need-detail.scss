@@ -1,0 +1,22 @@
+
+    .page-body  { padding: var(--spacing-6); max-width: 800px; }
+    .page-title { font-size: 1.25rem; font-weight: 700; margin-bottom: var(--spacing-2); }
+    .subtitle   { color: var(--color-text-secondary); margin-bottom: var(--spacing-6); }
+    .profiles-grid { display: flex; flex-direction: column; gap: var(--spacing-4); }
+    .conflict-alert { background: #fff7ed; border: 1px solid #f59e0b; color: #92400e; padding: var(--spacing-2) var(--spacing-3); border-radius: 6px; font-size: 0.875rem; }
+    .profile-card { display: flex; align-items: flex-start; gap: var(--spacing-4); padding: var(--spacing-4); border: 1.5px solid var(--color-border); border-radius: 8px; background: var(--color-surface); cursor: pointer; transition: border-color .15s; }
+    .profile-card:hover { border-color: var(--color-primary); }
+    .profile-card--selected { border-color: var(--color-primary); background: #f0fdf4; }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+    .profile-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .clevel  { font-weight: 700; font-size: 1rem; }
+    .sectors { font-size: 0.875rem; color: var(--color-text-secondary); }
+    .avail   { font-size: 0.8125rem; color: var(--color-text-secondary); }
+    .mono    { font-family: 'JetBrains Mono', monospace; }
+    .bio     { font-size: 0.875rem; margin: 4px 0 0; line-height: 1.5; }
+    .check-indicator { font-size: 1.25rem; color: var(--color-primary); font-weight: 700; width: 24px; flex-shrink: 0; }
+    .selection-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--spacing-4); margin-top: var(--spacing-6); }
+    .selection-count { font-size: 0.875rem; color: var(--color-text-secondary); }
+    .btn { padding: var(--spacing-2) var(--spacing-6); border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
+    .btn--primary { background: var(--color-primary); color: #fff; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }

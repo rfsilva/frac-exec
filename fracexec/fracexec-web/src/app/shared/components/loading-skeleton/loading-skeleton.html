@@ -1,0 +1,15 @@
+
+    <div class="skeleton-wrapper" role="status" aria-label="Carregando">
+      @if (type === 'card') {
+        <div class="skeleton-block skeleton-card"></div>
+      } @else if (type === 'list') {
+        @for (item of listRows; track item) {
+          <div class="skeleton-block skeleton-line"></div>
+        }
+      } @else if (type === 'table') {
+        <div class="skeleton-block skeleton-header"></div>
+        @for (item of tableRows; track item) {
+          <div class="skeleton-block skeleton-row"></div>
+        }
+      }
+    </div>

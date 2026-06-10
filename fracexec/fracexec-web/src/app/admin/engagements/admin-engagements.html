@@ -1,0 +1,57 @@
+
+    <div class="page-body">
+      <h1 class="page-title">Engajamentos</h1>
+
+      @if (loading()) { <p class="loading">Carregando...</p> }
+      @else if (engagements().length === 0) { <p class="empty">Nenhum engajamento registrado.</p> }
+      @else {
+        <div class="list">
+          @for (e of engagements(); track e.id) {
+            <div class="card">
+              <div class="row">
+                <div class="info">
+                  <span class="company">{{ e.companyName }}</span>
+                  <span class="exec">{{ e.executiveEmail }}</span>
+                  <span class="role mono">{{ e.cLevelType }} · R$ {{ e.monthlyValue | number:'1.2-2' }}/mês</span>
+                  <span class="date muted">Início: {{ e.startedAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="actions">
+                  <span class="badge badge--{{ e.status.toLowerCase() }}">{{ e.status }}</span>
+                  @if (e.status === 'ACTIVE' || e.status === 'PAUSED') {
+                    <button class="btn btn--sm" (click)="openModal(e)">Alterar status</button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Modal de mudança de status -->
+      @if (modalEngagement()) {
+        <div class="modal-backdrop" (click)="closeModal()">
+          <div class="modal" (click)="$event.stopPropagation()">
+            <h3 class="modal-title">Alterar status do engajamento</h3>
+            <p class="modal-company">{{ modalEngagement()!.companyName }} — {{ modalEngagement()!.cLevelType }}</p>
+            <div class="field">
+              <label class="label">Novo status</label>
+              <select class="input" [(ngModel)]="modalStatus">
+                <option value="PAUSED">PAUSED (Suspensão temporária)</option>
+                <option value="COMPLETED">COMPLETED (Encerramento natural)</option>
+                <option value="CANCELLED">CANCELLED (Rescisão antecipada)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label">Motivo</label>
+              <textarea class="input" rows="3" [(ngModel)]="modalReason" placeholder="Descreva o motivo da alteração..."></textarea>
+            </div>
+            <div class="modal-actions">
+              <button class="btn" (click)="closeModal()">Cancelar</button>
+              <button class="btn btn--primary" [disabled]="saving()" (click)="saveStatus()">
+                {{ saving() ? 'Salvando...' : 'Confirmar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>

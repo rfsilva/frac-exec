@@ -1,0 +1,15 @@
+
+    .conflict-container { padding: var(--spacing-6); max-width: 700px; }
+    .page-title { font-size: 1.25rem; font-weight: 700; margin-bottom: var(--spacing-6); }
+    .conflict-banner { display: flex; align-items: center; gap: var(--spacing-4); background: #fff7ed; border: 1px solid #f59e0b; border-radius: 8px; padding: var(--spacing-5); margin-bottom: var(--spacing-4); }
+    .overlap-side { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .overlap-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #92400e; letter-spacing: .05em; }
+    .overlap-value { font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #78350f; }
+    .overlap-icon { font-size: 1.5rem; color: #f59e0b; }
+    .conflict-desc { font-size: 0.9375rem; color: var(--color-text-secondary); margin-bottom: var(--spacing-6); line-height: 1.6; }
+    .actions { display: flex; gap: var(--spacing-3); flex-wrap: wrap; }
+    .btn { padding: var(--spacing-2) var(--spacing-5); border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn--danger   { background: #dc2626; color: #fff; }
+    .btn--warning  { background: #f59e0b; color: #fff; }
+    .btn--secondary { background: transparent; border: 1.5px solid var(--color-border); color: var(--color-text-primary); }

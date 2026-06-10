@@ -1,0 +1,20 @@
+
+    <div class="exec-layout">
+      <!-- AC-2.5: SealBanner non-dismissible acima do content -->
+      @if (profileStatus()) {
+        <app-seal-banner
+          [profileStatus]="profileStatus()!"
+          [email]="userEmail()"
+          [verificationDate]="null"
+          (updateAvailability)="openDrawer()" />
+      }
+      <app-shell [navItems]="navItems" />
+    </div>
+
+    <!-- Drawer de disponibilidade -->
+    <app-availability-drawer
+      [isOpen]="drawerOpen()"
+      [currentDays]="availabilityDays()"
+      [currentStatus]="profileStatus() ?? 'INACTIVE'"
+      (closed)="drawerOpen.set(false)"
+      (saved)="onAvailabilitySaved($event)" />

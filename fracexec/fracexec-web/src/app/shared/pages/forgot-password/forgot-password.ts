@@ -7,30 +7,8 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-forgot-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <div class="auth-container">
-      <h1>Recuperar senha</h1>
-
-      @if (!submitted()) {
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="field">
-            <label for="email">E-mail</label>
-            <input id="email" type="email" formControlName="email" autocomplete="email" />
-          </div>
-
-          <button type="submit" [disabled]="loading() || form.invalid">
-            {{ loading() ? 'Enviando…' : 'Enviar instruções' }}
-          </button>
-        </form>
-      } @else {
-        <!-- AC-13: mesma mensagem independente se email existe -->
-        <p role="status">
-          Se o e-mail estiver cadastrado, você receberá as instruções em instantes.
-        </p>
-        <a routerLink="/login">Voltar ao login</a>
-      }
-    </div>
-  `,
+  templateUrl: './forgot-password.html',
+  styleUrl: './forgot-password.scss',
 })
 export class ForgotPassword {
   form;

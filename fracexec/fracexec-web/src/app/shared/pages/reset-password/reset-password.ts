@@ -8,31 +8,8 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-reset-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <div class="auth-container">
-      <h1>Redefinir senha</h1>
-
-      @if (!done()) {
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="field">
-            <label for="newPassword">Nova senha</label>
-            <input id="newPassword" type="password" formControlName="newPassword" autocomplete="new-password" />
-          </div>
-
-          @if (errorMessage()) {
-            <p class="error-banner" role="alert">{{ errorMessage() }}</p>
-          }
-
-          <button type="submit" [disabled]="loading() || form.invalid">
-            {{ loading() ? 'Salvando…' : 'Redefinir senha' }}
-          </button>
-        </form>
-      } @else {
-        <p role="status">Senha redefinida com sucesso.</p>
-        <a routerLink="/login">Fazer login</a>
-      }
-    </div>
-  `,
+  templateUrl: './reset-password.html',
+  styleUrl: './reset-password.scss',
 })
 export class ResetPassword implements OnInit {
   form;

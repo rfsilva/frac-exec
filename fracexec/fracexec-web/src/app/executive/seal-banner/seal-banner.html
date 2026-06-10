@@ -1,0 +1,19 @@
+
+    <div class="seal-banner" role="banner" aria-label="Selo FracExec">
+      <div class="seal-icon" aria-hidden="true">✦</div>
+      <div class="seal-info">
+        <span class="seal-name">{{ displayName }}</span>
+        <span class="seal-date">{{ verificationDateLabel }}</span>
+      </div>
+      <div class="seal-status">
+        <span class="badge" [class]="statusClass" [attr.aria-label]="statusLabel + ' status'">
+          {{ statusLabel }}
+        </span>
+        @if (profileStatus === 'INACTIVE') {
+          <button class="btn-update" (click)="updateAvailability.emit()"
+                  aria-label="Atualizar disponibilidade">
+            Atualizar disponibilidade
+          </button>
+        }
+      </div>
+    </div>

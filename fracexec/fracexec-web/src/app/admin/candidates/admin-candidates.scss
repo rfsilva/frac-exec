@@ -1,0 +1,73 @@
+
+    .page-body { padding: var(--spacing-6); }
+    .filters {
+      display: flex; gap: var(--spacing-3); flex-wrap: wrap; margin-bottom: var(--spacing-5);
+      padding: var(--spacing-4); background: var(--color-surface-card);
+      border: 1px solid var(--color-border-default); border-radius: var(--radius-md);
+    }
+    .input {
+      padding: var(--spacing-2) var(--spacing-3); border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md); font-size: 13px; font-family: var(--font-body);
+      color: var(--color-text-primary); background: var(--color-surface-card);
+    }
+    .input:focus { outline: 2px solid var(--color-brand-accent); outline-offset: 2px; }
+    .select { min-width: 160px; }
+    .table-wrapper {
+      background: var(--color-surface-card); border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th {
+      text-align: left; padding: var(--spacing-3) var(--spacing-4); font-size: 12px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--color-text-muted); background: var(--color-surface-muted);
+      border-bottom: 1px solid var(--color-border-default);
+    }
+    .table td {
+      padding: var(--spacing-3) var(--spacing-4); font-size: 14px; color: var(--color-text-primary);
+      border-bottom: 1px solid var(--color-border-default); vertical-align: middle;
+    }
+    .table-row:hover { background: var(--color-surface-subtle); }
+    .row--expanded { background: var(--color-surface-muted); }
+    .accordion-row td { padding: 0; }
+    .text-muted { color: var(--color-text-secondary); }
+    .detail-panel {
+      padding: var(--spacing-5) var(--spacing-6); border-top: 1px solid var(--color-border-default);
+      background: var(--color-surface-card);
+    }
+    .detail-row { display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-3); align-items: baseline; }
+    .detail-label { font-size: 12px; font-weight: 600; color: var(--color-text-muted); min-width: 80px; }
+    .detail-section { margin-bottom: var(--spacing-4); }
+    .detail-section-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      color: var(--color-text-muted); letter-spacing: 0.05em; margin: 0 0 var(--spacing-2);
+    }
+    .position-item, .reference-item { font-size: 13px; margin-bottom: var(--spacing-1); }
+    .motivation-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
+    .detail-actions {
+      margin-top: var(--spacing-4); padding-top: var(--spacing-4);
+      border-top: 1px solid var(--color-border-default);
+    }
+    .btn-expand {
+      font-size: 12px; color: var(--color-brand-accent); background: none; border: none;
+      cursor: pointer; padding: var(--spacing-1) var(--spacing-2); border-radius: var(--radius-sm);
+    }
+    .btn-expand:hover { background: var(--color-surface-muted); }
+    .btn-primary {
+      padding: var(--spacing-2) var(--spacing-5); background: var(--color-brand-primary);
+      color: var(--color-brand-accent); border: none; border-radius: var(--radius-md);
+      font-family: var(--font-display); font-weight: 600; font-size: 14px; cursor: pointer;
+    }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary {
+      padding: var(--spacing-2) var(--spacing-4); background: transparent;
+      color: var(--color-text-secondary); border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md); font-size: 13px; cursor: pointer; white-space: nowrap;
+    }
+    .link { color: var(--color-brand-accent); font-size: 13px; }
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4);
+      padding: var(--spacing-12); background: var(--color-surface-card);
+      border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); text-align: center;
+    }
+    .empty-message { color: var(--color-text-secondary); font-size: 14px; margin: 0; }

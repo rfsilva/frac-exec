@@ -68,4 +68,56 @@ describe('ExecutiveDashboard', () => {
     comp.availabilityDays.set(20);
     expect(comp.progressPct).toBe(100);
   });
+
+  it('ngOnInit carrega dashboard e define dash', async () => {
+    const fixture = TestBed.createComponent(ExecutiveDashboard);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    // constructor GET profile
+    httpMock.expectOne('/api/v1/executive/profile').flush({ availabilityDaysPerMonth: 15, profileStatus: 'ACTIVE' });
+    // ngOnInit GET dashboard
+    const dashData = {
+      activeEngagementsCount: 2, committedDaysMonth: 8,
+      nextTransferAmount: 5000, pendingOpportunitiesCount: 1,
+      activeEngagements: [{ id: 'e1', companyName: 'Emp', cLevelType: 'CFO', scopeDaysPerMonth: 8, status: 'ACTIVE' }],
+      recentOpportunity: { id: 'o1', cLevelType: 'CFO', companySector: 'Tech', status: 'PENDING' },
+    };
+    httpMock.expectOne('/api/v1/executive/dashboard').flush(dashData);
+    await fixture.whenStable();
+    expect(comp.dash()).toBeTruthy();
+    expect(comp.dashLoading()).toBeFalsy();
+    expect(comp.availabilityDays()).toBe(15);
+  });
+
+  it('constructor trata erro de profile sem lançar', async () => {
+    const fixture = TestBed.createComponent(ExecutiveDashboard);
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/executive/profile')
+      .flush({}, { status: 500, statusText: 'Server Error' });
+    httpMock.expectOne('/api/v1/executive/dashboard').flush({
+      activeEngagementsCount: 0, committedDaysMonth: 0, nextTransferAmount: 0,
+      pendingOpportunitiesCount: 0, activeEngagements: [], recentOpportunity: null,
+    });
+    await fixture.whenStable();
+    expect(fixture.componentInstance.profileStatus()).toBe('ACTIVE');
+  });
+
+  it('onSaved atualiza availability e fecha drawer', async () => {
+    const fixture = TestBed.createComponent(ExecutiveDashboard);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    httpMock.expectOne('/api/v1/executive/profile').flush({ availabilityDaysPerMonth: 10, profileStatus: 'ACTIVE' });
+    httpMock.expectOne('/api/v1/executive/dashboard').flush({
+      activeEngagementsCount: 0, committedDaysMonth: 0, nextTransferAmount: 0,
+      pendingOpportunitiesCount: 0, activeEngagements: [], recentOpportunity: null,
+    });
+    await fixture.whenStable();
+
+    comp.onSaved({ availabilityDaysPerMonth: 12, profileStatus: 'ACTIVE' });
+    httpMock.expectOne('/api/v1/executive/profile/availability').flush({ availabilityDaysPerMonth: 12, profileStatus: 'ACTIVE' });
+    await fixture.whenStable();
+    expect(comp.availabilityDays()).toBe(12);
+    expect(comp.drawerOpen()).toBeFalsy();
+    expect(comp.savedMsg()).toBeTruthy();
+  });
 });

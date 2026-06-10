@@ -1,0 +1,105 @@
+
+    <app-page-header title="Perfil do Executivo"
+                     [breadcrumb]="['Admin', 'Pool', 'Detalhe']" />
+
+    <div class="page-body">
+      @if (loading()) { <app-loading-skeleton type="list" /> }
+
+      @if (!loading() && profile()) {
+        <div class="detail-grid">
+          <div class="card">
+            <div class="profile-header">
+              @if (profile()!.photoUrl) {
+                <img [src]="profile()!.photoUrl!" class="photo" alt="Foto do executivo">
+              } @else {
+                <div class="avatar">{{ initials }}</div>
+              }
+              <div>
+                <h2 class="name">{{ profile()!.fullName }}</h2>
+                <p class="email text-muted">{{ profile()!.email }}</p>
+                <p class="availability">
+                  {{ profile()!.availabilityDaysPerMonth }} dias/mês ·
+                  <span class="status">{{ profile()!.profileStatus }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          @if (profile()!.bio) {
+            <div class="card">
+              <h3 class="section-title">Bio</h3>
+              <p class="body-text">{{ profile()!.bio }}</p>
+            </div>
+          }
+
+          <div class="card">
+            <h3 class="section-title">Especialidades</h3>
+            <div class="tags">
+              @for (s of profile()!.specialties; track s) {
+                <span class="tag">{{ s }}</span>
+              }
+            </div>
+          </div>
+
+          @if (profile()!.sectors.length) {
+            <div class="card">
+              <h3 class="section-title">Setores</h3>
+              <p class="body-text">{{ profile()!.sectors.join(', ') }}</p>
+            </div>
+          }
+
+          <!-- AC-6: visibilidade de empresas — admin vê nomes reais -->
+          @if (companyEntries.length > 0) {
+            <div class="card">
+              <h3 class="section-title">Empresas anteriores (visão admin)</h3>
+              @for (entry of companyEntries; track entry.name) {
+                <div class="company-row">
+                  <span>{{ entry.name }}</span>
+                  <span class="vis-flag" [class.vis-hidden]="!entry.visible">
+                    {{ entry.visible ? 'Exibir nome' : 'Anonimizado' }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Story 4.1: Clientes ativos para detecção de conflito -->
+          <div class="card">
+            <h3 class="section-title">Clientes ativos (conflito de interesses)</h3>
+            @if (loadingClients()) {
+              <p class="body-text">Carregando...</p>
+            } @else {
+              <div class="client-list">
+                @for (c of clients(); track c.id) {
+                  <div class="client-row">
+                    <span class="client-tag">CNAE {{ c.cnae2digit }} · {{ c.regionState }}
+                      @if (c.regionCity) { — {{ c.regionCity }} }
+                    </span>
+                    <button class="btn-remove" (click)="removeClient(c.id)" title="Remover">×</button>
+                  </div>
+                }
+                @if (clients().length === 0) {
+                  <p class="body-text text-muted">Nenhum cliente registrado.</p>
+                }
+              </div>
+              @if (!showAddClient()) {
+                <button class="btn-add" (click)="showAddClient.set(true)">+ Adicionar cliente</button>
+              } @else {
+                <div class="add-form">
+                  <input class="input-small" type="text" placeholder="CNAE (2 dígitos)"
+                         maxlength="2" [(ngModel)]="newCnae">
+                  <input class="input-small" type="text" placeholder="UF (SP, RJ...)"
+                         maxlength="2" [(ngModel)]="newState">
+                  <input class="input-small" type="text" placeholder="Cidade (opcional)"
+                         [(ngModel)]="newCity">
+                  <button class="btn-save" [disabled]="!newCnae || !newState" (click)="addClient()">Salvar</button>
+                  <button class="btn-cancel" (click)="showAddClient.set(false)">Cancelar</button>
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <button class="btn-back" (click)="back()">← Voltar para pool</button>
+      }
+    </div>

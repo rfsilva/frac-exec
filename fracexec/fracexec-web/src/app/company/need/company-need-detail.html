@@ -1,0 +1,41 @@
+
+    <div class="page-body">
+      @if (loading()) { <app-loading-skeleton type="card" /> }
+
+      @if (!loading() && needStatus() === 'SHORTLIST_SENT') {
+        <h1 class="page-title">Revise os perfis selecionados</h1>
+        <p class="subtitle">Selecione até 2 executivos de interesse para avançar.</p>
+
+        <div class="profiles-grid">
+          @for (p of profiles(); track p.shortlistExecutiveId) {
+            @if (p.conflictStatus === 'APPROVED_WITH_ALERT') {
+              <div class="conflict-alert">⚠ Este executivo atua em empresa do mesmo segmento na sua região.</div>
+            }
+            <div class="profile-card" [class.profile-card--selected]="isSelected(p.shortlistExecutiveId)"
+                 (click)="toggleSelect(p.shortlistExecutiveId)">
+              <div class="avatar">{{ p.sectorInitials }}</div>
+              <div class="profile-info">
+                <span class="clevel">{{ p.cLevelType }}</span>
+                <span class="sectors">{{ p.sectors.join(', ') }}</span>
+                <span class="avail mono">{{ p.availabilityDaysPerMonth }} dias/mês</span>
+                @if (p.bioSummary) { <p class="bio">{{ p.bioSummary }}...</p> }
+              </div>
+              <div class="check-indicator">{{ isSelected(p.shortlistExecutiveId) ? '✓' : '' }}</div>
+            </div>
+          }
+        </div>
+
+        <div class="selection-actions">
+          <span class="selection-count">{{ selected().length }} / 2 selecionados</span>
+          <button class="btn btn--primary" [disabled]="selected().length === 0 || confirming()"
+                  (click)="confirmSelection()">
+            {{ confirming() ? 'Confirmando...' : 'Confirmar seleção' }}
+          </button>
+        </div>
+      }
+
+      @if (!loading() && (needStatus() === 'IN_MEDIATION' || needStatus() === 'CONTRACTED')) {
+        <h1 class="page-title">Thread de Mediação</h1>
+        <app-mediation-thread [needId]="needId" role="PME" />
+      }
+    </div>

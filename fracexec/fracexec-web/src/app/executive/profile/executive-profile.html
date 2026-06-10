@@ -1,0 +1,156 @@
+
+    <app-page-header title="Meu Perfil" [breadcrumb]="['Executivo', 'Perfil']" />
+
+    <div class="page-body">
+
+      @if (showBanner()) {
+        <div class="banner" role="alert">
+          Complete seu perfil para aparecer na pool de executivos.
+        </div>
+      }
+
+      @if (loading()) { <app-loading-skeleton type="list" /> }
+
+      @if (!loading()) {
+        <form [formGroup]="form" (ngSubmit)="saveProfile()" novalidate>
+
+          <!-- Foto -->
+          <div class="card">
+            <h2 class="section-title">Foto de perfil</h2>
+            <div class="photo-row">
+              @if (photoUrl()) {
+                <img [src]="photoUrl()!" class="photo-preview" alt="Foto de perfil">
+              } @else {
+                <div class="photo-placeholder" aria-hidden="true">◎</div>
+              }
+              <div>
+                <input type="file" accept="image/*" (change)="onPhotoSelected($event)"
+                       class="file-input" aria-label="Selecionar foto de perfil">
+                @if (uploadingPhoto()) { <p class="hint">Enviando foto...</p> }
+              </div>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div class="card">
+            <h2 class="section-title">Bio <span class="required">*</span></h2>
+            <textarea class="textarea" rows="5" formControlName="bio"
+                      placeholder="Descreva sua trajetória C-Level (máx. 300 palavras)"></textarea>
+            <p class="word-counter" [class.word-counter--over]="wordCount() > MAX_WORDS">
+              {{ wordCount() }} / {{ MAX_WORDS }} palavras
+            </p>
+            @if (f['bio'].invalid && f['bio'].touched) {
+              <p class="error">Bio é obrigatória.</p>
+            }
+            @if (wordCount() > MAX_WORDS) {
+              <p class="error">Bio excede o limite de {{ MAX_WORDS }} palavras.</p>
+            }
+          </div>
+
+          <!-- Especialidades -->
+          <div class="card">
+            <h2 class="section-title">Especialidades C-Level <span class="required">*</span></h2>
+            <div class="checkbox-group">
+              @for (s of allSpecialties; track s) {
+                <label class="checkbox-label">
+                  <input type="checkbox" [checked]="isSelected(s)" (change)="toggleSpecialty(s)">
+                  {{ s }}
+                </label>
+              }
+            </div>
+            @if (selectedSpecialties().length === 0 && specialtiesTouched()) {
+              <p class="error">Selecione ao menos uma especialidade.</p>
+            }
+          </div>
+
+          <!-- Setores -->
+          <div class="card">
+            <h2 class="section-title">Setores de experiência</h2>
+            <div class="chips-row">
+              @for (sector of sectors(); track sector) {
+                <span class="chip">
+                  {{ sector }}
+                  <button type="button" class="chip-remove" (click)="removeSector(sector)"
+                          [attr.aria-label]="'Remover ' + sector">×</button>
+                </span>
+              }
+            </div>
+            <div class="sector-input-row">
+              <input class="input" type="text" [(ngModel)]="newSector"
+                     [ngModelOptions]="{standalone: true}"
+                     placeholder="Ex: Tecnologia, Varejo, Saúde"
+                     (keydown.enter)="addSector(); $event.preventDefault()">
+              <button type="button" class="btn-secondary" (click)="addSector()">Adicionar</button>
+            </div>
+          </div>
+
+          <!-- B1: Visibilidade de empresas anteriores (AC-2) -->
+          @if (applicationCompanies().length > 0) {
+            <div class="card">
+              <h2 class="section-title">Visibilidade das empresas anteriores</h2>
+              <p class="hint-text">Escolha quais nomes de empresa serão exibidos publicamente no seu perfil.</p>
+              @for (company of applicationCompanies(); track company) {
+                <div class="visibility-row">
+                  <span class="company-name">{{ company }}</span>
+                  <div class="toggle-group">
+                    <label class="checkbox-label">
+                      <input type="radio" [name]="'vis-' + company" [value]="true"
+                             [checked]="getVisibility(company) !== false"
+                             (change)="setVisibility(company, true)">
+                      Exibir nome
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="radio" [name]="'vis-' + company" [value]="false"
+                             [checked]="getVisibility(company) === false"
+                             (change)="setVisibility(company, false)">
+                      Anonimizar
+                    </label>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Resumo de experiência -->
+          <div class="card">
+            <h2 class="section-title">Resumo de experiência verificada</h2>
+            <textarea class="textarea" rows="4" formControlName="experienceSummary"
+                      placeholder="Descreva suas principais realizações."></textarea>
+          </div>
+
+          <!-- Ações -->
+          <div class="form-actions">
+            @if (savedMsg()) { <p class="saved-msg">Perfil atualizado.</p> }
+            @if (errorMsg()) { <p class="error">{{ errorMsg() }}</p> }
+            <button type="submit" class="btn-primary" [disabled]="saving()">
+              {{ saving() ? 'Salvando...' : 'Salvar perfil' }}
+            </button>
+          </div>
+
+        </form>
+
+        <!-- Story 6.3: LGPD — Exclusão de conta -->
+        <div class="privacy-section">
+          <h3 class="privacy-title">Privacidade e dados</h3>
+          @if (!deleteConfirm()) {
+            <button class="btn-danger" (click)="deleteConfirm.set(true)">
+              Solicitar exclusão de conta
+            </button>
+          } @else {
+            <div class="delete-modal">
+              <p class="delete-text">
+                Seus dados pessoais serão removidos em até <strong>30 dias</strong>.
+                Engajamentos ativos serão encerrados. Contratos assinados são preservados por obrigação legal.
+              </p>
+              @if (deleteMsg()) { <p class="delete-feedback">{{ deleteMsg() }}</p> }
+              <div class="delete-actions">
+                <button class="btn-secondary" (click)="deleteConfirm.set(false)">Cancelar</button>
+                <button class="btn-danger" [disabled]="deleting()" (click)="requestDeletion()">
+                  {{ deleting() ? 'Enviando...' : 'Confirmar exclusão' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>

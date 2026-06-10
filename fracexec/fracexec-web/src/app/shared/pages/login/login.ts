@@ -8,39 +8,8 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  template: `
-    <div class="auth-container">
-      <h1>Entrar no FracExec</h1>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="field">
-          <label for="email">E-mail</label>
-          <input id="email" type="email" formControlName="email" autocomplete="email" />
-          @if (form.get('email')?.invalid && form.get('email')?.touched) {
-            <span class="error">E-mail inválido.</span>
-          }
-        </div>
-
-        <div class="field">
-          <label for="password">Senha</label>
-          <input id="password" type="password" formControlName="password" autocomplete="current-password" />
-        </div>
-
-        @if (errorMessage()) {
-          <p class="error-banner" role="alert">{{ errorMessage() }}</p>
-        }
-
-        <button type="submit" [disabled]="loading() || form.invalid">
-          {{ loading() ? 'Entrando…' : 'Entrar' }}
-        </button>
-      </form>
-
-      <a routerLink="/forgot-password">Esqueci minha senha</a>
-      <p style="margin-top:1rem;font-size:0.875rem;text-align:center">
-        É uma empresa? <a routerLink="/register">Cadastre-se aqui</a>
-      </p>
-    </div>
-  `,
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
 })
 export class Login {
   form;

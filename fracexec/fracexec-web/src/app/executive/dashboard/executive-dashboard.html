@@ -1,0 +1,94 @@
+
+    <app-page-header title="Dashboard" [breadcrumb]="['Executivo', 'Dashboard']" />
+
+    <div class="page-body">
+
+      <!-- Story 6.1: Stat cards -->
+      @if (dashLoading()) {
+        <app-loading-skeleton type="card" />
+      } @else if (dash()) {
+        <div class="stat-row">
+          <div class="stat-card">
+            <span class="stat-label">Engajamentos ativos</span>
+            <span class="stat-value">{{ dash()!.activeEngagementsCount }}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Dias comprometidos</span>
+            <span class="stat-value mono">{{ dash()!.committedDaysMonth }} dias/mês</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Próximo repasse</span>
+            <span class="stat-value mono">R$ {{ dash()!.nextTransferAmount | number:'1.2-2' }}</span>
+          </div>
+          <div class="stat-card" [class.stat-card--alert]="dash()!.pendingOpportunitiesCount > 0">
+            <span class="stat-label">Oportunidades pendentes</span>
+            <span class="stat-value">{{ dash()!.pendingOpportunitiesCount }}</span>
+          </div>
+        </div>
+
+        <!-- Engajamentos ativos -->
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Engajamentos ativos</h2>
+            <a routerLink="/executive/engagements" class="section-link">Ver todos →</a>
+          </div>
+          @if (dash()!.activeEngagements.length === 0) {
+            <p class="empty">Nenhum engajamento ativo no momento.</p>
+          } @else {
+            @for (e of dash()!.activeEngagements; track e.id) {
+              <div class="eng-row">
+                <div class="eng-info">
+                  <span class="eng-company">{{ e.companyName }}</span>
+                  <span class="eng-role">{{ e.cLevelType }} · {{ e.scopeDaysPerMonth }} dias/mês</span>
+                </div>
+                <app-status-badge [variant]="engStatus(e.status)" [label]="e.status" />
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Oportunidades -->
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Oportunidades</h2>
+            <a routerLink="/executive/opportunities" class="section-link">Ver todas →</a>
+          </div>
+          @if (dash()!.pendingOpportunitiesCount === 0) {
+            <p class="empty">Nenhuma oportunidade aguardando resposta.</p>
+          } @else if (dash()!.recentOpportunity) {
+            <div class="opp-preview">
+              <span class="opp-badge">{{ dash()!.recentOpportunity!.cLevelType }}</span>
+              <span class="opp-sector">{{ dash()!.recentOpportunity!.companySector }}</span>
+              <span class="opp-count">+{{ dash()!.pendingOpportunitiesCount - 1 }} mais</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- AC-2.5: Widget de disponibilidade -->
+      <div class="widget-card">
+        <h2 class="widget-title">Disponibilidade</h2>
+        <div class="availability-row">
+          <div class="progress-wrap">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="progressPct"></div>
+            </div>
+            <span class="days-value">{{ availabilityDays() }} / 20</span>
+          </div>
+          <button class="btn-edit" (click)="drawerOpen.set(true)"
+                  aria-label="Editar disponibilidade">Editar</button>
+        </div>
+        @if (savedMsg()) {
+          <p class="saved-msg">Disponibilidade atualizada.</p>
+        }
+      </div>
+
+    </div>
+
+    <!-- Drawer de disponibilidade -->
+    <app-availability-drawer
+      [isOpen]="drawerOpen()"
+      [currentDays]="availabilityDays()"
+      [currentStatus]="profileStatus() ?? 'ACTIVE'"
+      (closed)="drawerOpen.set(false)"
+      (saved)="onSaved($event)" />

@@ -11,7 +11,8 @@ const COMPANY_NAV: NavItem[] = [
   selector: 'app-company-shell',
   standalone: true,
   imports: [AppShell],
-  template: `<app-shell [navItems]="navItems" />`,
+  templateUrl: './company-shell.html',
+  styleUrl: './company-shell.scss',
 })
 export class CompanyShell {
   readonly navItems = COMPANY_NAV;

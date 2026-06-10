@@ -1,0 +1,31 @@
+
+    <div class="page-body">
+      <h1 class="page-title">Empresas</h1>
+
+      @if (loading()) {
+        <app-loading-skeleton type="table" />
+      } @else if (companies().length === 0) {
+        <p class="empty">Nenhuma empresa cadastrada.</p>
+      } @else {
+        <div class="list">
+          @for (c of companies(); track c.id) {
+            <div class="list-item">
+              <div class="list-row">
+                <span class="col col--name">{{ c.legalName }}</span>
+                <span class="col col--cnpj mono">{{ c.cnpj }}</span>
+                <span class="col col--resp">{{ c.responsibleName }}</span>
+                <app-status-badge [variant]="statusVariant(c.status)" [label]="statusLabel(c.status)" />
+                <span class="col col--date mono">{{ c.createdAt | slice:0:10 }}</span>
+                @if (c.status === 'PENDING_ACTIVATION') {
+                  <button class="btn btn--primary"
+                          [disabled]="activating() === c.id"
+                          (click)="activate(c)">
+                    {{ activating() === c.id ? 'Ativando...' : 'Ativar acesso' }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
