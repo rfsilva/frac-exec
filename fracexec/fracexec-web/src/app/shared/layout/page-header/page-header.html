@@ -1,10 +1,7 @@
 
     @if (breadcrumb && breadcrumb.length) {
-      <!-- P5: aria-label distinto do sidebar ("Menu de navegação") -->
       <nav class="breadcrumb" aria-label="Localização atual">
-        <!-- P3: track $index evita colisão com valores duplicados -->
         @for (crumb of breadcrumb; track $index; let last = $last) {
-          <!-- P6: aria-current="page" no último item para screen readers -->
           <span
             class="crumb"
             [class.crumb--current]="last"

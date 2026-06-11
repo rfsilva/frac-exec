@@ -29,21 +29,22 @@
 
       <!-- Modal de mudança de status -->
       @if (modalEngagement()) {
-        <div class="modal-backdrop" (click)="closeModal()">
-          <div class="modal" (click)="$event.stopPropagation()">
-            <h3 class="modal-title">Alterar status do engajamento</h3>
+        <dialog class="modal-backdrop" open (keydown.escape)="closeModal()"
+                aria-labelledby="engagement-modal-title">
+          <div class="modal">
+            <h3 class="modal-title" id="engagement-modal-title">Alterar status do engajamento</h3>
             <p class="modal-company">{{ modalEngagement()!.companyName }} — {{ modalEngagement()!.cLevelType }}</p>
             <div class="field">
-              <label class="label">Novo status</label>
-              <select class="input" [(ngModel)]="modalStatus">
+              <label class="label" for="modal-status">Novo status</label>
+              <select id="modal-status" class="input" [(ngModel)]="modalStatus">
                 <option value="PAUSED">PAUSED (Suspensão temporária)</option>
                 <option value="COMPLETED">COMPLETED (Encerramento natural)</option>
                 <option value="CANCELLED">CANCELLED (Rescisão antecipada)</option>
               </select>
             </div>
             <div class="field">
-              <label class="label">Motivo</label>
-              <textarea class="input" rows="3" [(ngModel)]="modalReason" placeholder="Descreva o motivo da alteração..."></textarea>
+              <label class="label" for="modal-reason">Motivo</label>
+              <textarea id="modal-reason" class="input" rows="3" [(ngModel)]="modalReason" placeholder="Descreva o motivo da alteração..."></textarea>
             </div>
             <div class="modal-actions">
               <button class="btn" (click)="closeModal()">Cancelar</button>
@@ -52,6 +53,6 @@
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       }
     </div>
