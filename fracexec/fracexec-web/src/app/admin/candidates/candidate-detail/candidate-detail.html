@@ -99,9 +99,8 @@
 
       <!-- Modal de aprovação -->
       @if (showApproveModal()) {
-        <dialog class="modal-overlay" open (click)="showApproveModal.set(false)"
-                (keydown.escape)="showApproveModal.set(false)" aria-labelledby="approve-modal-title">
-          <div class="modal" (click)="$event.stopPropagation()">
+        <dialog class="modal-overlay" open (keydown.escape)="showApproveModal.set(false)" aria-labelledby="approve-modal-title">
+          <div class="modal">
             <h3 class="modal-title" id="approve-modal-title">Confirmar aprovação</h3>
             <p class="modal-body">O executivo receberá e-mail com link para criar seu perfil.</p>
             <div class="modal-actions">
@@ -116,9 +115,8 @@
 
       <!-- Modal de rejeição -->
       @if (showRejectModal()) {
-        <dialog class="modal-overlay" open (click)="showRejectModal.set(false)"
-                (keydown.escape)="showRejectModal.set(false)" aria-labelledby="reject-modal-title">
-          <div class="modal" (click)="$event.stopPropagation()">
+        <dialog class="modal-overlay" open (keydown.escape)="showRejectModal.set(false)" aria-labelledby="reject-modal-title">
+          <div class="modal">
             <h3 class="modal-title" id="reject-modal-title">Confirmar rejeição</h3>
             <p class="modal-body">O candidato receberá e-mail com resposta genérica.</p>
             <textarea class="textarea" rows="3"

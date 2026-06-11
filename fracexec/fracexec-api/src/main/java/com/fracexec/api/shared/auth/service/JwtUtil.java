@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.Date; //NOSONAR java:S2143
 
 @Component
+@SuppressWarnings("java:S2143") // JJWT 0.12 builder/Claims API requires java.util.Date
 public class JwtUtil {
 
     @Value("${fracexec.jwt.secret}")

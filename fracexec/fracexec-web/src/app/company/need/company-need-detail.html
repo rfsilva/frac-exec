@@ -11,11 +11,11 @@
             @if (p.conflictStatus === 'APPROVED_WITH_ALERT') {
               <div class="conflict-alert">⚠ Este executivo atua em empresa do mesmo segmento na sua região.</div>
             }
-            <div class="profile-card" [class.profile-card--selected]="isSelected(p.shortlistExecutiveId)"
-                 (click)="toggleSelect(p.shortlistExecutiveId)"
-                 (keydown.enter)="toggleSelect(p.shortlistExecutiveId)"
-                 (keydown.space)="toggleSelect(p.shortlistExecutiveId)"
-                 tabindex="0" role="checkbox" [attr.aria-checked]="isSelected(p.shortlistExecutiveId)">
+            <label class="profile-card" [class.profile-card--selected]="isSelected(p.shortlistExecutiveId)">
+              <input type="checkbox" class="sr-only"
+                     [checked]="isSelected(p.shortlistExecutiveId)"
+                     (change)="toggleSelect(p.shortlistExecutiveId)"
+                     [attr.aria-label]="'Selecionar executivo ' + p.cLevelType">
               <div class="avatar">{{ p.sectorInitials }}</div>
               <div class="profile-info">
                 <span class="clevel">{{ p.cLevelType }}</span>
@@ -23,8 +23,8 @@
                 <span class="avail mono">{{ p.availabilityDaysPerMonth }} dias/mês</span>
                 @if (p.bioSummary) { <p class="bio">{{ p.bioSummary }}...</p> }
               </div>
-              <div class="check-indicator">{{ isSelected(p.shortlistExecutiveId) ? '✓' : '' }}</div>
-            </div>
+              <div class="check-indicator" aria-hidden="true">{{ isSelected(p.shortlistExecutiveId) ? '✓' : '' }}</div>
+            </label>
           }
         </div>
 
