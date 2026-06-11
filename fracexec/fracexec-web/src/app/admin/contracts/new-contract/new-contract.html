@@ -4,8 +4,8 @@
 
       <form [formGroup]="form" (ngSubmit)="submit()" class="form">
         <div class="field">
-          <label class="label">Necessidade (IN_MEDIATION) *</label>
-          <select class="input" formControlName="needId">
+          <label class="label" for="needId">Necessidade (IN_MEDIATION) *</label>
+          <select id="needId" class="input" formControlName="needId">
             <option value="" disabled>Selecione a necessidade</option>
             @for (n of needs(); track n.id) {
               <option [value]="n.id">{{ n.companyLegalName }} — {{ n.cLevelType }}</option>
@@ -14,8 +14,8 @@
         </div>
 
         <div class="field">
-          <label class="label">Executivo *</label>
-          <select class="input" formControlName="executiveProfileId">
+          <label class="label" for="executiveProfileId">Executivo *</label>
+          <select id="executiveProfileId" class="input" formControlName="executiveProfileId">
             <option value="" disabled>Selecione o executivo</option>
             @for (p of profiles(); track p.id) {
               <option [value]="p.id">{{ p.email }} ({{ p.specialties.join(', ') }})</option>
@@ -25,16 +25,16 @@
 
         <div class="field-row">
           <div class="field">
-            <label class="label">Valor mensal (R$) *</label>
-            <input class="input mono" type="number" min="100" step="100" formControlName="monthlyValue">
+            <label class="label" for="monthlyValue">Valor mensal (R$) *</label>
+            <input id="monthlyValue" class="input mono" type="number" min="100" step="100" formControlName="monthlyValue">
           </div>
           <div class="field">
-            <label class="label">Dias/mês *</label>
-            <input class="input" type="number" min="1" max="20" formControlName="scopeDaysPerMonth">
+            <label class="label" for="scopeDaysPerMonth">Dias/mês *</label>
+            <input id="scopeDaysPerMonth" class="input" type="number" min="1" max="20" formControlName="scopeDaysPerMonth">
           </div>
           <div class="field">
-            <label class="label">Duração (meses)</label>
-            <input class="input" type="number" min="1" formControlName="durationMonths">
+            <label class="label" for="durationMonths">Duração (meses)</label>
+            <input id="durationMonths" class="input" type="number" min="1" formControlName="durationMonths">
           </div>
         </div>
 

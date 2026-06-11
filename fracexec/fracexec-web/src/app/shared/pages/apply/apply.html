@@ -6,18 +6,17 @@
     </header>
 
     <!-- Stepper indicator -->
-    <div class="stepper" role="list" aria-label="Etapas da candidatura">
+    <ol class="stepper" aria-label="Etapas da candidatura">
       @for (step of steps; track step.n) {
-        <div class="step"
+        <li class="step"
              [class.step--active]="currentStep() === step.n"
-             [class.step--done]="currentStep() > step.n"
-             role="listitem">
+             [class.step--done]="currentStep() > step.n">
           <div class="step-circle">{{ currentStep() > step.n ? '✓' : step.n }}</div>
           <span class="step-label">{{ step.label }}</span>
-        </div>
-        @if (!$last) { <div class="step-line"></div> }
+        </li>
+        @if (!$last) { <li class="step-line" aria-hidden="true"></li> }
       }
-    </div>
+    </ol>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
@@ -77,8 +76,8 @@
                 </div>
 
                 <div class="field">
-                  <label class="label">Cargo C-Level *</label>
-                  <input class="input" type="text" formControlName="roleTitle"
+                  <label class="label" [attr.for]="'pos-role-' + $index">Cargo C-Level *</label>
+                  <input [id]="'pos-role-' + $index" class="input" type="text" formControlName="roleTitle"
                          placeholder="Ex: CFO, CTO, COO">
                   @if (pos.get('roleTitle')?.invalid && pos.get('roleTitle')?.touched) {
                     <span class="error">Cargo é obrigatório.</span>
@@ -86,34 +85,34 @@
                 </div>
 
                 <div class="field">
-                  <label class="label">Empresa (opcional — será anonimizada)</label>
-                  <input class="input" type="text" formControlName="companyName"
+                  <label class="label" [attr.for]="'pos-company-' + $index">Empresa (opcional — será anonimizada)</label>
+                  <input [id]="'pos-company-' + $index" class="input" type="text" formControlName="companyName"
                          placeholder="Deixe em branco para manter anônimo">
                 </div>
 
                 <div class="field-row">
                   <div class="field">
-                    <label class="label">Início *</label>
-                    <input class="input" type="date" formControlName="periodStart">
+                    <label class="label" [attr.for]="'pos-start-' + $index">Início *</label>
+                    <input [id]="'pos-start-' + $index" class="input" type="date" formControlName="periodStart">
                     @if (pos.get('periodStart')?.invalid && pos.get('periodStart')?.touched) {
                       <span class="error">Data de início obrigatória.</span>
                     }
                   </div>
                   <div class="field">
-                    <label class="label">Fim</label>
-                    <input class="input" type="date" formControlName="periodEnd">
+                    <label class="label" [attr.for]="'pos-end-' + $index">Fim</label>
+                    <input [id]="'pos-end-' + $index" class="input" type="date" formControlName="periodEnd">
                   </div>
                 </div>
 
                 <div class="field-row">
                   <div class="field">
-                    <label class="label">Tamanho da equipe</label>
-                    <input class="input" type="text" formControlName="teamSize"
+                    <label class="label" [attr.for]="'pos-team-' + $index">Tamanho da equipe</label>
+                    <input [id]="'pos-team-' + $index" class="input" type="text" formControlName="teamSize"
                            placeholder="Ex: 50 pessoas">
                   </div>
                   <div class="field">
-                    <label class="label">Receita sob gestão</label>
-                    <input class="input" type="text" formControlName="revenueManaged"
+                    <label class="label" [attr.for]="'pos-rev-' + $index">Receita sob gestão</label>
+                    <input [id]="'pos-rev-' + $index" class="input" type="text" formControlName="revenueManaged"
                            placeholder="Ex: R$50M (deixe em branco se não aplicável)">
                   </div>
                 </div>
@@ -139,23 +138,23 @@
 
                 <div class="field-row">
                   <div class="field">
-                    <label class="label">Nome *</label>
-                    <input class="input" type="text" formControlName="refName">
+                    <label class="label" [attr.for]="'ref-name-' + $index">Nome *</label>
+                    <input [id]="'ref-name-' + $index" class="input" type="text" formControlName="refName">
                     @if (ref.get('refName')?.invalid && ref.get('refName')?.touched) {
                       <span class="error">Nome é obrigatório.</span>
                     }
                   </div>
                   <div class="field">
-                    <label class="label">Cargo *</label>
-                    <input class="input" type="text" formControlName="refRole">
+                    <label class="label" [attr.for]="'ref-role-' + $index">Cargo *</label>
+                    <input [id]="'ref-role-' + $index" class="input" type="text" formControlName="refRole">
                     @if (ref.get('refRole')?.invalid && ref.get('refRole')?.touched) {
                       <span class="error">Cargo é obrigatório.</span>
                     }
                   </div>
                 </div>
                 <div class="field">
-                  <label class="label">Contato (e-mail ou telefone) *</label>
-                  <input class="input" type="text" formControlName="refContact">
+                  <label class="label" [attr.for]="'ref-contact-' + $index">Contato (e-mail ou telefone) *</label>
+                  <input [id]="'ref-contact-' + $index" class="input" type="text" formControlName="refContact">
                   @if (ref.get('refContact')?.invalid && ref.get('refContact')?.touched) {
                     <span class="error">Contato é obrigatório.</span>
                   }

@@ -12,7 +12,7 @@
     .contract-status { display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .badge { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; width: fit-content; }
     .badge--active  { background: #e8f5e9; color: #1b5e20; }
-    .badge--pending { background: #fff3e0; color: #e65100; }
+    .badge--pending { background: #fff3e0; color: #78350f; }
     .signed-date, .sig-flags { font-size: 0.75rem; color: var(--color-text-secondary); }
     .contract-actions { display: flex; gap: var(--spacing-2); }
     .btn { padding: var(--spacing-2) var(--spacing-4); border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; }

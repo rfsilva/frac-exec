@@ -26,7 +26,7 @@
         <div class="list">
           @for (need of needs(); track need.id) {
             <div class="list-item" [class.list-item--expanded]="expandedId() === need.id">
-              <div class="list-row" (click)="toggle(need.id)">
+              <div class="list-row" (click)="toggle(need.id)" (keydown.enter)="toggle(need.id)" (keydown.space)="toggle(need.id)" tabindex="0" role="button" [attr.aria-expanded]="expandedId() === need.id">
                 <span class="col col--company">{{ need.companyLegalName }}</span>
                 <span class="col col--clevel">{{ need.cLevelType }}</span>
                 <span class="col col--scope">{{ need.scopeDaysPerMonth }} dias/mês

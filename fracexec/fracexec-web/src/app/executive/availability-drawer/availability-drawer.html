@@ -1,13 +1,12 @@
 
     @if (isOpen) {
       <!-- Backdrop -->
-      <div class="drawer-backdrop" (click)="onBackdropClick()" aria-hidden="true"></div>
+      <div class="drawer-backdrop" (click)="onBackdropClick()" (keydown.escape)="onBackdropClick()" aria-hidden="true"></div>
 
-      <!-- Drawer panel — P2: tabindex makes it focusable for focus-trap -->
-      <div class="drawer" role="dialog" aria-modal="true" aria-label="Editar disponibilidade"
-           tabindex="-1" id="availability-drawer-panel">
+      <!-- Drawer panel -->
+      <dialog class="drawer" open aria-labelledby="drawer-title" id="availability-drawer-panel">
         <div class="drawer-header">
-          <h2 class="drawer-title">Disponibilidade</h2>
+          <h2 class="drawer-title" id="drawer-title">Disponibilidade</h2>
           <button class="btn-close" (click)="onBackdropClick()"
                   aria-label="Fechar drawer">×</button>
         </div>
@@ -15,8 +14,8 @@
         <div class="drawer-body">
           <div class="field">
             <label class="label" for="days">Dias disponíveis / mês</label>
-            <input id="days" class="input" type="number" min="0" max="20"
-                   aria-label="Dias por mês" [(ngModel)]="editDays" min="1" max="20"
+            <input id="days" class="input" type="number" min="1" max="20"
+                   aria-label="Dias por mês" [(ngModel)]="editDays"
                    (ngModelChange)="onChanged()">
             <p class="hint">Entre 1 e 20 dias. Para pausar, use o seletor de status abaixo.</p>
           </div>
@@ -35,17 +34,15 @@
 
         <div class="drawer-footer">
           <button class="btn-secondary" (click)="onBackdropClick()">Cancelar</button>
-          <!-- B1: disabled durante save para evitar PATCH duplo -->
           <button class="btn-primary" (click)="onSave()" [disabled]="saving()">
             {{ saving() ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>
-      </div>
+      </dialog>
 
       <!-- Confirmação de descarte -->
       @if (showConfirm()) {
-        <div class="confirm-overlay" role="alertdialog" aria-modal="true"
-             aria-label="Descartar alterações?">
+        <dialog class="confirm-overlay" open aria-label="Descartar alterações?">
           <div class="confirm-box">
             <p class="confirm-msg">Descartar alterações?</p>
             <div class="confirm-actions">
@@ -53,6 +50,6 @@
               <button class="btn-danger"    (click)="onDiscard()">Descartar</button>
             </div>
           </div>
-        </div>
+        </dialog>
       }
     }

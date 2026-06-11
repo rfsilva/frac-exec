@@ -12,7 +12,10 @@
               <div class="conflict-alert">⚠ Este executivo atua em empresa do mesmo segmento na sua região.</div>
             }
             <div class="profile-card" [class.profile-card--selected]="isSelected(p.shortlistExecutiveId)"
-                 (click)="toggleSelect(p.shortlistExecutiveId)">
+                 (click)="toggleSelect(p.shortlistExecutiveId)"
+                 (keydown.enter)="toggleSelect(p.shortlistExecutiveId)"
+                 (keydown.space)="toggleSelect(p.shortlistExecutiveId)"
+                 tabindex="0" role="checkbox" [attr.aria-checked]="isSelected(p.shortlistExecutiveId)">
               <div class="avatar">{{ p.sectorInitials }}</div>
               <div class="profile-info">
                 <span class="clevel">{{ p.cLevelType }}</span>
@@ -36,6 +39,6 @@
 
       @if (!loading() && (needStatus() === 'IN_MEDIATION' || needStatus() === 'CONTRACTED')) {
         <h1 class="page-title">Thread de Mediação</h1>
-        <app-mediation-thread [needId]="needId" role="PME" />
+        <app-mediation-thread [needId]="needId" [role]="'PME'" />
       }
     </div>
